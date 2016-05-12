@@ -1,27 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="well spaced" style="width:40%;">
-<div>
-    <h1>Login</h1>
-    <form action="/login" method="POST">
 
-        <div class="form-group">
-            <label>Email:
-                <input type="email" name="email" required class="form-control">
-            </label>
-        </div>
+<h1>Login to Go Lists</h1>
 
-        <div class="form-group">
-            <label>Password:
-                <input type="password" name="password" required class="form-control">
-            </label>
-        </div>
 
-        <div class="form-group">
-            <input type="submit" value="Log In If You Dare" class="btn btn-danger">
-        </div>
+<form action="/user_validation" method="POST">
 
-    </form>
-</div>
-</div>
+    Username (email) <input type="text" name="email"> 
+        <br>
+    Password <input type="text" name="password">
+        <br>
+    Login <input type="submit">    
+        <br>
+</form>
+
 {% endblock %}

@@ -1,4 +1,4 @@
-"""Movie Ratings."""
+"""Go Lists"""
 
 from jinja2 import StrictUndefined
 
@@ -25,72 +25,6 @@ def index():
     return render_template("homepage.html")
 
 
-@app.route('/register', methods=['GET'])
-def register_form():
-    """Show form for user signup."""
-
-    return render_template("register_form.html")
-
-
-@app.route('/register', methods=['POST'])
-def register_process():
-    """Process registration."""
-
-    # Get form variables
-    email = request.form["email"]
-    password = request.form["password"]
-    age = int(request.form["age"])
-    zipcode = request.form["zipcode"]
-
-    new_user = User(email=email, password=password, age=age, zipcode=zipcode)
-
-    db.session.add(new_user)
-    db.session.commit()
-
-    flash("User %s added." % email)
-    return redirect("/users/%s" % new_user.user_id)
-
-
-@app.route('/login', methods=['GET'])
-def login_form():
-    """Show login form."""
-
-    return render_template("login_form.html")
-
-
-@app.route('/login', methods=['POST'])
-def login_process():
-    """Process login."""
-
-    # Get form variables
-    email = request.form["email"]
-    password = request.form["password"]
-
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        flash("No such user")
-        return redirect("/login")
-
-    if user.password != password:
-        flash("Incorrect password")
-        return redirect("/login")
-
-    session["user_id"] = user.user_id
-
-    flash("Logged in")
-    return redirect("/users/%s" % user.user_id)
-
-
-@app.route('/logout')
-def logout():
-    """Log out."""
-
-    del session["user_id"]
-    flash("Logged Out.")
-    return redirect("/")
-
-
 @app.route("/users")
 def user_list():
     """Show list of users."""
@@ -99,142 +33,141 @@ def user_list():
     return render_template("user_list.html", users=users)
 
 
-@app.route("/users/<int:user_id>")
-def user_detail(user_id):
-    """Show info about user."""
+@app.route("/lists")
+def all_lists():
+    """Show list of lists."""
 
-    user = User.query.get(user_id)
-    return render_template("user.html", user=user)
-
-
-@app.route("/movies")
-def movie_list():
-    """Show list of movies."""
-
-    movies = Movie.query.order_by('title').all()
-    return render_template("movie_list.html", movies=movies)
+    lists = List.query.order_by('list_name').all()
+    return render_template("all_lists.html", lists=lists)
 
 
-@app.route("/movies/<int:movie_id>", methods=['GET'])
-def movie_detail(movie_id):
-    """Show info about movie.
+@app.route('/login')
+def login():
+    """Take users to page where they have the option to login or register""" 
 
-    If a user is logged in, let them add/edit a rating.
-    """
-    print "made it here"
-
-    movie = Movie.query.get(movie_id)
-
-    user_id = session.get("user_id")
-
-    if user_id:
-        user_rating = Rating.query.filter_by(
-            movie_id=movie_id, user_id=user_id).first()
-
-    else:
-        user_rating = None
-
-    # Get average rating of movie
-
-    rating_scores = [r.score for r in movie.ratings]
-    avg_rating = float(sum(rating_scores)) / len(rating_scores)
-
-    prediction = None
-
-    # Prediction code: only predict if the user hasn't rated it.
-
-    if (not user_rating) and user_id:
-        user = User.query.get(user_id)
-        if user:
-            prediction = user.predict_rating(movie)
-
-    # Either use the prediction or their real rating
-
-    if prediction:
-        # User hasn't scored; use our prediction if we made one
-        effective_rating = prediction
-
-    elif user_rating:
-        # User has already scored for real; use that
-        effective_rating = user_rating.score
-
-    else:
-        # User hasn't scored, and we couldn't get a prediction
-        effective_rating = None
-
-    # Get the eye's rating, either by predicting or using real rating
-
-    the_eye = User.query.filter_by(email="the-eye@of-judgment.com").one()
-    eye_rating = Rating.query.filter_by(
-        user_id=the_eye.user_id, movie_id=movie.movie_id).first()
-
-    if eye_rating is None:
-        eye_rating = the_eye.predict_rating(movie)
-
-    else:
-        eye_rating = eye_rating.score
-
-    if eye_rating and effective_rating:
-        difference = abs(eye_rating - effective_rating)
-
-    else:
-        # We couldn't get an eye rating, so we'll skip difference
-        difference = None
-
-    # Depending on how different we are from the Eye, choose a message
-
-    BERATEMENT_MESSAGES = [
-        "I suppose you don't have such bad taste after all.",
-        "I regret every decision that I've ever made that has brought me" +
-            " to listen to your opinion.",
-        "Words fail me, as your taste in movies has clearly failed you.",
-        "Did you watch this movie in an alternate universe where your taste doesn't suck?",
-        "Words cannot express the awfulness of your taste."
-    ]
-
-    if difference is not None:
-        beratement = BERATEMENT_MESSAGES[int(difference)]
-
-    else:
-        beratement = None
-
-    return render_template(
-        "movie.html",
-        movie=movie,
-        user_rating=user_rating,
-        average=avg_rating,
-        prediction=prediction,
-        eye_rating=eye_rating,
-        difference=difference,
-        beratement=beratement
-        )
+    return render_template("login.html")
 
 
-@app.route("/movies/<int:movie_id>", methods=['POST'])
-def movie_detail_process(movie_id):
-    """Add/edit a rating."""
+@app.route('/register')
+def register():
+    """Send user to registration page"""
 
-    # Get form variables
-    score = int(request.form["score"])
+    return render_template("register.html")
 
-    user_id = session.get("user_id")
-    if not user_id:
-        raise Exception("No user logged in.")
 
-    rating = Rating.query.filter_by(user_id=user_id, movie_id=movie_id).first()
+@app.route('/users/<int:user_id>')
+def user_page(user_id):
+    """Take user to a page that displays user info"""
 
-    if rating:
-        rating.score = score
-        flash("Rating updated.")
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
 
-    else:
-        rating = Rating(user_id=user_id, movie_id=movie_id, score=score)
-        flash("Rating added.")
-        db.session.add(rating)
+    # raise Exception("let's play")
 
-    db.session.commit()
+    return render_template("user_detail.html", user=user, lists=lists)
 
-    return redirect("/movies/%s" % movie_id)
+
+# @app.route('/movies/<int:movie_id>')
+# def movie_page(movie_id):
+#     """Take user to a page that displays movie info"""
+
+#     movie = Movie.query.filter_by(movie_id=movie_id).first()
+#     session['current_movie'] = movie.movie_id
+    
+#     ratings = Rating.query.filter_by(movie_id=movie_id).all()
+
+#     # raise Exception("let's play")
+
+#     return render_template("movie_detail.html", movie=movie, ratings=ratings)
+
+
+# @app.route('/rate', methods=["POST"])
+# def rate_movie():
+#     """rate movie in db"""
+
+#     movie_id = session['current_movie']
+
+#     flash("User is logged in")
+#     user_id = session['current_user']
+   
+#     score = request.form.get("rating")
+    
+#     # raise Exception("let's play")
+
+#     if Rating.query.filter_by(movie_id=movie_id, user_id=user_id).first() == None:
+#         # raise Exception("let's play")
+#         new_rating = Rating(movie_id=movie_id,
+#                             user_id=user_id,
+#                             score=score)
+#         db.session.add(new_rating)
+#         db.session.commit()
+#         flash("database updated")
+#     # else:
+#     #     use db.session to update dbase
+
+#     print "got here!"
+    
+
+#     movie = Movie.query.filter_by(movie_id=movie_id).first()
+#     ratings = Rating.query.filter_by(movie_id=movie_id).all()
+
+#     return render_template("movie_detail.html", movie=movie, ratings=ratings)
+
+
+# @app.route('/user_add', methods=["POST"])
+# def user_add():
+#     """add new users to dbase"""
+#     # ADD a Flask flash message 
+
+#     email = request.form.get("email")
+#     password = request.form.get("password")
+#     age = request.form.get("age")
+#     zipcode = request.form.get("zipcode")
+
+#     if User.query.filter_by(email=email).first() == None:
+#         new_user = User(email=email,
+#                         password=password, 
+#                         age=age, 
+#                         zipcode=zipcode)
+#         db.session.add(new_user)
+#         db.session.commit()
+
+#         flash("User " + email + " is now registered")
+#         session['current_user'] = new_user.user_id
+
+#     return render_template("homepage.html")
+
+# @app.route('/user_validation', methods=["POST"])
+# def user_validation():
+#     """Validate user login"""
+
+#     email = request.form.get("email")
+#     password = request.form.get("password")
+    
+#     user = User.query.filter_by(email=email).first()
+    
+#     if user == None:
+#         flash("No cheesecake for you! Looks like you need to register")
+#         return render_template("register.html")
+#     elif user.password == password:
+#         session['current_user'] = user.user_id
+#         print session
+#         flash("User " + email + " signed in")
+#         return render_template("homepage.html")
+#     else:
+#         flash("Password doesn't match. No cheesecake for you!")
+#         return render_template("sign_in.html")
+        
+# @app.route('/logout')
+# def log_user_out_of_session():
+#     """remove user from session"""
+    
+#     session.clear()
+#     # print session
+#     flash("you have logged out")
+#     # print session
+
+#     return render_template("homepage.html")
 
 
 if __name__ == "__main__":
