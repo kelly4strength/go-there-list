@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+
+    <h2>Lists</h2>
+    <ul>
+      {% for list in lists %}
+          <li>
+              <a href="/lists/{{ list.list_name }}">
+                {{ list.list_name }}
+              </a>
+          </li>
+      {% endfor %}
+    </ul>
+
+{% endblock %}
