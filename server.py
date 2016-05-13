@@ -68,17 +68,16 @@ def user_page(user_id):
 
 # MAKE THIS for Lists
 @app.route('/lists/<int:list_id>')
-def list_page(list_id):
+def list_details(list_id):
     """Take user to a page that displays a list"""
 
     list = List.query.filter_by(list_id=list_id).first()
-    session['current_list'] = list.list_id
-    
+    # session['current_list'] = list.list_id
+
     items = Item.query.filter_by(list_id=list_id).all()
 
     # raise Exception("let's play")
-
-    return render_template("list.html", list=list, items=items)
+    return render_template("list_detail.html", list=list, items=items)
 
 # MAKE THIS for adding lists
 # @app.route('/rate', methods=["POST"])
