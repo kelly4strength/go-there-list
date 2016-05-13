@@ -38,8 +38,9 @@ class List(db.Model):
     location_id = db.Column(db.Integer, db.ForeignKey('locations.location_id'))
 
     # Define relationship to user - from a user I want to be able to call that users' lists
-    user = db.relationship("User",
-                           backref=db.backref("lists", order_by=list_id))
+    # user = db.relationship("User",
+                           # backref=db.backref("lists", order_by=list_id))
+    user = db.relationship('User')
     # Define relationship to location
     location = db.relationship('Location')
 
@@ -113,16 +114,11 @@ def connect_to_db(app, db_uri="postgresql:///golists"):
     db.app = app
     db.init_app(app)
 
-
 if __name__ == "__main__":
     from server import app
     
     connect_to_db(app)
     print "Connected to DB."
 
-
     # uncomment as needed after dropdb/createdb to regenerate sample data.
     db.create_all()
-    
-    # sample_data()
-    # print "Sample Data created"

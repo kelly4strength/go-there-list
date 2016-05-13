@@ -114,60 +114,59 @@ def user_page(user_id):
 #     return render_template("movie_detail.html", movie=movie, ratings=ratings)
 
 
-# @app.route('/user_add', methods=["POST"])
-# def user_add():
-#     """add new users to dbase"""
-#     # ADD a Flask flash message 
+@app.route('/user_add', methods=["POST"])
+def user_add():
+    """add new users to dbase"""
+    # ADD a Flask flash message 
 
-#     email = request.form.get("email")
-#     password = request.form.get("password")
-#     age = request.form.get("age")
-#     zipcode = request.form.get("zipcode")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user_name = request.form.get("user_name")
 
-#     if User.query.filter_by(email=email).first() == None:
-#         new_user = User(email=email,
-#                         password=password, 
-#                         age=age, 
-#                         zipcode=zipcode)
-#         db.session.add(new_user)
-#         db.session.commit()
+    if User.query.filter_by(email=email).first() == None:
+        new_user = User(email=email,
+                        password=password, 
+                        user_name=user_name)
+        db.session.add(new_user)
+        db.session.commit()
 
-#         flash("User " + email + " is now registered")
-#         session['current_user'] = new_user.user_id
+        flash("User " + email + " is now registered")
 
-#     return render_template("homepage.html")
+        session['current_user'] = new_user.user_id
 
-# @app.route('/user_validation', methods=["POST"])
-# def user_validation():
-#     """Validate user login"""
+    return render_template("homepage.html")
 
-#     email = request.form.get("email")
-#     password = request.form.get("password")
+@app.route('/user_validation', methods=["POST"])
+def user_validation():
+    """Validate user login"""
+
+    email = request.form.get("email")
+    password = request.form.get("password")
     
-#     user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).first()
     
-#     if user == None:
-#         flash("No cheesecake for you! Looks like you need to register")
-#         return render_template("register.html")
-#     elif user.password == password:
-#         session['current_user'] = user.user_id
-#         print session
-#         flash("User " + email + " signed in")
-#         return render_template("homepage.html")
-#     else:
-#         flash("Password doesn't match. No cheesecake for you!")
-#         return render_template("sign_in.html")
+    if user == None:
+        flash("Looks like you need to register")
+        return render_template("register.html")
+    elif user.password == password:
+        session['current_user'] = user.user_id
+        print session
+        flash("User " + email + " signed in")
+        return render_template("homepage.html")
+    else:
+        flash("Password doesn't match. Try 1234")
+        return render_template("sign_in.html")
         
-# @app.route('/logout')
-# def log_user_out_of_session():
-#     """remove user from session"""
+@app.route('/logout')
+def log_user_out_of_session():
+    """remove user from session"""
     
-#     session.clear()
-#     # print session
-#     flash("you have logged out")
-#     # print session
+    session.clear()
+    # print session
+    flash("you have logged out")
+    # print session
 
-#     return render_template("homepage.html")
+    return render_template("homepage.html")
 
 
 if __name__ == "__main__":

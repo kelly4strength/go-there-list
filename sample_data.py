@@ -87,3 +87,5 @@ connect_to_db(app)
 print "Connected to DB."
 
 sample_data()
+
+print "Sample Data created"
