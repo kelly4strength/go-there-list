@@ -40,7 +40,7 @@ class List(db.Model):
     # Define relationship to user - from a user I want to be able to call that users' lists
     user = db.relationship("User",
                            backref=db.backref("lists", order_by=list_id))
-
+    # Define relationship to location
     location = db.relationship('Location')
 
     def __repr__(self):
@@ -84,17 +84,17 @@ class Item(db.Model):
     __tablename__ = "items"
 
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    item_name = db.Column(db.Integer)
+    item_name = db.Column(db.String)
     item_comments = db.Column(db.String(100))
     item_address = db.Column(db.String(100))
     list_id = db.Column(db.Integer, db.ForeignKey('lists.list_id'))
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
     
     # Define relationship to list_id
-    my_list = db.relationship('List')
+    list = db.relationship('List')
 
     # Define relationship to category_id
-    # category = db.relationship('Category')
+    category = db.relationship('Category')
 
     def __repr__(self):
         """Provide helpful representation when printed."""
