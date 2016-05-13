@@ -1,31 +1,35 @@
-<!-- {% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block content %}
 
-        <h2>Movie Info</h2>
+        <h2>List Info</h2>
     <div>
-        <hs>Rate this movie!</h3>
-            <!user must be logged in or get an error -->
-<!-- <form action="/rate" method="POST"> 
+           <!--  user must be logged in or get an error -->
+<!-- <form action="/list" method="POST"> 
         <br>
     Rating 1-5 with 5 as the best: <input type="text" name="rating">
         <br>
     <input type="submit">    
         <br>
-</form>
+</form> -->
+
+
+<!-- Want to show the Users lists here, ordered by City, City ordered alphabetically
+They should be clickable links to the list detail pages -->
 
         <ul>
-            <li>Movie Title: {{ movie.title }}</li>
-             <li>Movie ID: {{ movie.movie_id }}</li>
-            <li>Release Date: {{ movie.release_dt }}</li> 
-            <li>Imdb Link: {{ movie.imdb_url }}</li>
+            <li>List Name: {{ list.list_name }}</li>
+            <li>Items: {{ item.item_id }}</li>
         </ul>
         <ul>  
-        {% for rating in ratings %}
+        {% for list in lists %}
 
-            <li>Rating: {{rating.rating_id}} {{rating.user_id}} {{rating.score}}</li>
+            <li>List: {{list.list_id}} {{list.user_id}} {{List.user_name}}</li>
       
         {% endfor %}
           </ul>
     </div>
 
-{% endblock %} -->
+{% endblock %}
+
+
+

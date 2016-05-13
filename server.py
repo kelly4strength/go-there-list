@@ -66,21 +66,21 @@ def user_page(user_id):
 
     return render_template("user_detail.html", user=user, lists=lists)
 
+# MAKE THIS for Lists
+@app.route('/lists/<int:list_id>')
+def list_page(list_id):
+    """Take user to a page that displays a list"""
 
-# @app.route('/movies/<int:movie_id>')
-# def movie_page(movie_id):
-#     """Take user to a page that displays movie info"""
-
-#     movie = Movie.query.filter_by(movie_id=movie_id).first()
-#     session['current_movie'] = movie.movie_id
+    list = List.query.filter_by(list_id=list_id).first()
+    session['current_list'] = list.list_id
     
-#     ratings = Rating.query.filter_by(movie_id=movie_id).all()
+    items = Item.query.filter_by(list_id=list_id).all()
 
-#     # raise Exception("let's play")
+    # raise Exception("let's play")
 
-#     return render_template("movie_detail.html", movie=movie, ratings=ratings)
+    return render_template("list.html", list=list, items=items)
 
-
+# MAKE THIS for adding lists
 # @app.route('/rate', methods=["POST"])
 # def rate_movie():
 #     """rate movie in db"""
