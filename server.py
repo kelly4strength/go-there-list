@@ -43,9 +43,15 @@ def all_lists():
 
 @app.route('/login')
 def login():
-    """Take users to page where they have the option to login or register""" 
+    """Send user to login page""" 
 
     return render_template("login.html")
+
+@app.route('/create_list')
+def create_list():
+    """Send user to list creation page""" 
+
+    return render_template("create_list.html")
 
 
 @app.route('/register')
@@ -53,6 +59,66 @@ def register():
     """Send user to registration page"""
 
     return render_template("register.html")
+
+
+@app.route('/user_add', methods=["POST"])
+def user_add():
+    """add new users to dbase"""
+    # ADD a Flask flash message 
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+    user_name = request.form.get("user_name")
+
+    if User.query.filter_by(email=email).first() == None:
+        new_user = User(email=email,
+                        password=password, 
+                        user_name=user_name)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("User " + email + " is now registered")
+
+        session['current_user'] = new_user.user_id
+
+    return render_template("homepage.html")
+    # want this to reroute you to your user detail page?
+    #maybe need to add a query in here... like /lists
+    # return render_template("user_detail.html")
+    # return render_template("user_detail.html", user=user, lists=lists)
+
+@app.route('/user_validation', methods=["POST"])
+def user_validation():
+    """Validate user login"""
+
+    email = request.form.get("email")
+    password = request.form.get("password")
+    
+    user = User.query.filter_by(email=email).first()
+    
+    if user == None:
+        flash("Looks like you need to register")
+        return render_template("register.html")
+    elif user.password == password:
+        session['current_user'] = user.user_id
+        print session
+        flash("User " + email + " signed in")
+        #should this also rereout to the user detail page?
+        return render_template("homepage.html")
+    else:
+        flash("Password doesn't match. Try 1234")
+        return render_template("login.html")
+        
+@app.route('/logout')
+def log_user_out_of_session():
+    """remove user from session"""
+    
+    session.clear()
+    # print session
+    flash("you have logged out")
+    # print session
+
+    return render_template("homepage.html")
 
 
 @app.route('/users/<int:user_id>')
@@ -66,11 +132,11 @@ def user_page(user_id):
 
     return render_template("user_detail.html", user=user, lists=lists)
 
-# MAKE THIS for Lists
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
 
+#queries here are to give the jinja the info it needs to render on the page?
     list = List.query.filter_by(list_id=list_id).first()
     # session['current_list'] = list.list_id
 
@@ -80,9 +146,43 @@ def list_details(list_id):
     return render_template("list_detail.html", list=list, items=items)
 
 # MAKE THIS for adding lists
-# @app.route('/rate', methods=["POST"])
-# def rate_movie():
-#     """rate movie in db"""
+@app.route('/create_a_list', methods=["GET"])
+def create_list():
+    """create list as logged in user that saves to the db"""
+
+    list_name = request.args.get ("list_name")
+    location_name = request.args.get("location_name")
+    category_name = request.args.get("category_name")
+    item_name = request.args.get ("item_name")
+    item_address = request.args.get ("item_address")
+    item_comments = request.args.get ("item_comments")
+
+
+    # new_list = List(list_name=list_name)
+    # new_item = Location(location_name=location_name)
+    # new_category = Category(category_name=category_name)
+    # new_item = Item(item_name=item_name,
+    #                     item_address=item_address,
+    #                     item_comments=item_comments)
+
+    # db.session.add(new_list)
+    # db.session.commit()
+
+    return render_template("create_list.html")
+    # render_template("list_detail.html",
+    #                     list_name=list_name,
+    #                     location_name=location_name,
+    #                     category_name=category_name,
+    #                     item_name=item_name,
+    #                     item_address=item_address,
+    #                     item_comments=item_comments)
+
+# Button - create_list
+# user clicks Button
+# taken to new page at (create_list.html)
+# user fills in info
+# clicks submit
+# data from form is saved to db
 
 #     movie_id = session['current_movie']
 
@@ -111,61 +211,6 @@ def list_details(list_id):
 #     ratings = Rating.query.filter_by(movie_id=movie_id).all()
 
 #     return render_template("movie_detail.html", movie=movie, ratings=ratings)
-
-
-@app.route('/user_add', methods=["POST"])
-def user_add():
-    """add new users to dbase"""
-    # ADD a Flask flash message 
-
-    email = request.form.get("email")
-    password = request.form.get("password")
-    user_name = request.form.get("user_name")
-
-    if User.query.filter_by(email=email).first() == None:
-        new_user = User(email=email,
-                        password=password, 
-                        user_name=user_name)
-        db.session.add(new_user)
-        db.session.commit()
-
-        flash("User " + email + " is now registered")
-
-        session['current_user'] = new_user.user_id
-
-    return render_template("homepage.html")
-
-@app.route('/user_validation', methods=["POST"])
-def user_validation():
-    """Validate user login"""
-
-    email = request.form.get("email")
-    password = request.form.get("password")
-    
-    user = User.query.filter_by(email=email).first()
-    
-    if user == None:
-        flash("Looks like you need to register")
-        return render_template("register.html")
-    elif user.password == password:
-        session['current_user'] = user.user_id
-        print session
-        flash("User " + email + " signed in")
-        return render_template("homepage.html")
-    else:
-        flash("Password doesn't match. Try 1234")
-        return render_template("sign_in.html")
-        
-@app.route('/logout')
-def log_user_out_of_session():
-    """remove user from session"""
-    
-    session.clear()
-    # print session
-    flash("you have logged out")
-    # print session
-
-    return render_template("homepage.html")
 
 
 if __name__ == "__main__":
