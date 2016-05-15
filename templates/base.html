@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style type="text/css">
 
+div {
+font-family: Futura;
+color: #09B2A9;
+}
+
+title{
+font-family: Futura;
+color: #09B2A9;
+}
+  </style>
     <title>Go Lists</title>
 
     <!-- Bootstrap -->
 </head>
 <body>
-        <h1>Welcome to Go Lists</h1>
-
           <div>
             {% for message in get_flashed_messages()  %}
                 {{ message }}

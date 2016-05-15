@@ -145,31 +145,39 @@ def list_details(list_id):
     # raise Exception("let's play")
     return render_template("list_detail.html", list=list, items=items)
 
-# MAKE THIS for adding lists
-@app.route('/create_a_list', methods=["GET"])
-def create_list():
+
+@app.route('/create_a_list', methods=["POST"])
+def create_a_list():
     """create list as logged in user that saves to the db"""
 
-    list_name = request.args.get ("list_name")
-    location_name = request.args.get("location_name")
-    category_name = request.args.get("category_name")
-    item_name = request.args.get ("item_name")
-    item_address = request.args.get ("item_address")
-    item_comments = request.args.get ("item_comments")
+#need to add user here 
+#should it get user from session?
+#flash("User is logged in")
+#user_id = session['current_user']
+    list_name = request.form.get("list_name")
+    location_name = request.form.get("location_name")
+    # category_name = request.form.get("category_name")
+    # item_name = request.form.get("item_name")
+    # item_address = request.form.get("item_address")
+    # item_comments = request.form.get("item_comments")
 
+    new_list = List(list_name=list_name)
+    new_location = Location(location_name=location_name)
+                    # category_name=category_name,
+                    # item_name=item_name,
+                    # item_address=item_address,
+                    # item_comments=item_comments)
 
-    # new_list = List(list_name=list_name)
-    # new_item = Location(location_name=location_name)
-    # new_category = Category(category_name=category_name)
-    # new_item = Item(item_name=item_name,
-    #                     item_address=item_address,
-    #                     item_comments=item_comments)
+    db.session.add(new_list)
+    db.session.add(new_location)
+    db.session.commit()
 
-    # db.session.add(new_list)
-    # db.session.commit()
+#Feel like I need to get the list id in here somehow and
+#it will matter what user is logged in so the list is attached to them 
+#see the ratings when logged in user rates things
 
-    return render_template("create_list.html")
-    # render_template("list_detail.html",
+    return render_template("homepage.html")
+    # return render_template("list_detail.html",
     #                     list_name=list_name,
     #                     location_name=location_name,
     #                     category_name=category_name,
@@ -177,35 +185,20 @@ def create_list():
     #                     item_address=item_address,
     #                     item_comments=item_comments)
 
-# Button - create_list
-# user clicks Button
-# taken to new page at (create_list.html)
-# user fills in info
-# clicks submit
-# data from form is saved to db
-
 #     movie_id = session['current_movie']
-
-#     flash("User is logged in")
-#     user_id = session['current_user']
    
 #     score = request.form.get("rating")
-    
-#     # raise Exception("let's play")
 
 #     if Rating.query.filter_by(movie_id=movie_id, user_id=user_id).first() == None:
 #         # raise Exception("let's play")
 #         new_rating = Rating(movie_id=movie_id,
 #                             user_id=user_id,
 #                             score=score)
-#         db.session.add(new_rating)
-#         db.session.commit()
-#         flash("database updated")
-#     # else:
-#     #     use db.session to update dbase
 
+#         flash("database updated")
+    # else:
+    #     use db.session to update dbase
 #     print "got here!"
-    
 
 #     movie = Movie.query.filter_by(movie_id=movie_id).first()
 #     ratings = Rating.query.filter_by(movie_id=movie_id).all()

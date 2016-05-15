@@ -43,6 +43,7 @@ class List(db.Model):
     user = db.relationship('User')
     # Define relationship to location
     location = db.relationship('Location')
+    item = db.relationship('Item')  
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -85,16 +86,14 @@ class Item(db.Model):
     __tablename__ = "items"
 
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    item_name = db.Column(db.String)
+    item_name = db.Column(db.String(100))
     item_comments = db.Column(db.String(100))
     item_address = db.Column(db.String(100))
     list_id = db.Column(db.Integer, db.ForeignKey('lists.list_id'))
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
     
-    # Define relationship to list_id
+    # Setting up table relationships
     list = db.relationship('List')
-
-    # Define relationship to category_id
     category = db.relationship('Category')
 
     def __repr__(self):
