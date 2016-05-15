@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Create a new List for </h1>
+
+
+<form action="/choose_list_name" method="POST">
+
+    Name your list <input type="text" name="list_name">
+    <br>
+  
+    Save List Name <input type="submit">    
+    <br>
+
+</form>
+
+{% endblock %}

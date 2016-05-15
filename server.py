@@ -51,7 +51,7 @@ def login():
 def create_list():
     """Send user to list creation page""" 
 
-    return render_template("create_list.html")
+    return render_template("choose_location.html")
 
 
 @app.route('/register')
@@ -114,9 +114,9 @@ def log_user_out_of_session():
     """remove user from session"""
     
     session.clear()
-    # print session
+    print session
     flash("you have logged out")
-    # print session
+    print session
 
     return render_template("homepage.html")
 
@@ -146,64 +146,72 @@ def list_details(list_id):
     return render_template("list_detail.html", list=list, items=items)
 
 
-@app.route('/create_a_list', methods=["POST"])
-def create_a_list():
-    """create list as logged in user that saves to the db"""
+@app.route('/choose_location', methods=["POST"])
+def choose_location():
+    """choose location for new list as logged in user that saves to the db"""
 
-#need to add user here 
-#should it get user from session?
-#flash("User is logged in")
-#user_id = session['current_user']
-    list_name = request.form.get("list_name")
+# flash("User is logged in")
+# user_id = session['current_user']
+
     location_name = request.form.get("location_name")
-    # category_name = request.form.get("category_name")
-    # item_name = request.form.get("item_name")
-    # item_address = request.form.get("item_address")
-    # item_comments = request.form.get("item_comments")
 
-    new_list = List(list_name=list_name)
     new_location = Location(location_name=location_name)
-                    # category_name=category_name,
-                    # item_name=item_name,
-                    # item_address=item_address,
-                    # item_comments=item_comments)
 
-    db.session.add(new_list)
     db.session.add(new_location)
     db.session.commit()
 
-#Feel like I need to get the list id in here somehow and
-#it will matter what user is logged in so the list is attached to them 
-#see the ratings when logged in user rates things
+    return render_template("choose_list_name.html", location_name=location_name)
+
+
+@app.route('/choose_list_name', methods=["POST"])
+def choose_list_name():
+    """choose list name for new list as logged in user that saves to the db"""
+
+# flash("User is logged in")
+# user_id = session['current_user']
+
+    list_name = request.form.get("list_name")
+
+    new_list = List(list_name=list_name)
+
+    db.session.add(new_list)
+    db.session.commit()
+
+    return render_template("add_items.html")
+
+
+@app.route('/add_items', methods=["POST"])
+def add_items():
+    """create list as logged in user that saves to the db"""
+
+# flash("User is logged in")
+# user_id = session['current_user']
+
+    category_name = request.form.get("category_name")
+    item_name = request.form.get("item_name")
+    item_address = request.form.get("item_address")
+    item_comments = request.form.get("item_comments")
+
+    new_category = Category(category_name=category_name)
+
+    db.session.add(new_category)
+    db.session.commit()
+
+    new_item = Item(item_name=item_name,
+                    item_address=item_address,
+                    item_comments=item_comments)
+
+    db.session.add(new_item)
+    db.session.commit()
 
     return render_template("homepage.html")
     # return render_template("list_detail.html",
-    #                     list_name=list_name,
-    #                     location_name=location_name,
-    #                     category_name=category_name,
-    #                     item_name=item_name,
-    #                     item_address=item_address,
-    #                     item_comments=item_comments)
-
-#     movie_id = session['current_movie']
-   
-#     score = request.form.get("rating")
-
-#     if Rating.query.filter_by(movie_id=movie_id, user_id=user_id).first() == None:
-#         # raise Exception("let's play")
-#         new_rating = Rating(movie_id=movie_id,
-#                             user_id=user_id,
-#                             score=score)
-
-#         flash("database updated")
-    # else:
-    #     use db.session to update dbase
-#     print "got here!"
-
-#     movie = Movie.query.filter_by(movie_id=movie_id).first()
-#     ratings = Rating.query.filter_by(movie_id=movie_id).all()
-
-#     return render_template("movie_detail.html", movie=movie, ratings=ratings)
+                        # list_name=list_name,
+                        # location_name=location_name,
+                        # category_name=category_name,
+                        # item_name=item_name,
+                        # item_address=item_address,
+                        # item_comments=item_comments)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Create a new List</h1>
+
+<form action="/choose_location" method="POST">
+
+        <br> 
+First, choose a location <input type="text" name="location_name">
+        <br> 
+
+    Save your location <input type="submit">    
+        <br>
+</form>
+
+{% endblock %}

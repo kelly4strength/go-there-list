@@ -36,12 +36,12 @@ class List(db.Model):
     list_name = db.Column(db.String(100))
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     location_id = db.Column(db.Integer, db.ForeignKey('locations.location_id'))
-
-    # Define relationship to user - from a user I want to be able to call that users' lists
-    # user = db.relationship("User",
-                           # backref=db.backref("lists", order_by=list_id))
+    
+    #was testing this to get data into the create list form
+    # location_name = db.Column(db.Integer, db.ForeignKey('locations.location_name'))
+    
+    # Define relationships
     user = db.relationship('User')
-    # Define relationship to location
     location = db.relationship('Location')
     item = db.relationship('Item')  
 
@@ -59,6 +59,8 @@ class Location(db.Model):
 
     location_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     location_name = db.Column(db.String(100))
+
+    list = db.relationship('List')
 
     def __repr__(self):
         """Provide helpful representation when printed."""
