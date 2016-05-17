@@ -169,11 +169,12 @@ def initiate_list():
         session['current_location'] = location.location_id
         print session
 
+    #session carried over - remember that thing I asked you to remember? Here it is.
     location_id = session['current_location']
 
+    #query to set the variable list_name in order to pass it into the new_list object
     list_name = request.form.get("list_name")
 
-    # if List.query.filter_by(user_id=user_id, location_id=location_id).first() == None:
     new_list = List(user_id=user_id,
                     location_id=location_id,
                     list_name=list_name)
@@ -181,55 +182,60 @@ def initiate_list():
     db.session.add(new_list)
     db.session.commit()
 
-
     list = List.query.filter_by(list_name=list_name).first()
     
     #telling the session to please remember this now
     session['current_list'] = list.list_id
-    
+    print session
+
     flash ("database updated with new list name")
 
+    # return render_template("homepage.html")
+    return render_template("add_items.html", 
+                            location_name=location_name, 
+                            list_name=list_name)
+
+
+@app.route('/add_items', methods=["POST"])
+def add_items():
+    """create list as logged in user that saves to the db"""
+
+    # flash("User" + user_id "is logged in" + list_id "and" + location_id)
+    user_id = session['current_user']
+    location_id = session['current_location']
+    list_id = session['current_list']
+    print session
+
+    category_name = request.form.get("category_name")
+    # query categories to get the id 
+    category = Category.query.filter_by(category_name=category_name).first()
+    
+    #adds to db
+    # db.session.add(category_id)
+    # db.session.commit()
+    
+    session['current_category'] = category.category_id
+        # print session
+    category_id = session['current_category']
+    print session
+
+    # category = Category.query.filter_by(category_name=category_name).first()
+    
+    item_name = request.form.get("item_name")
+    item_address = request.form.get("item_address")
+    item_comments = request.form.get("item_comments")
+
+    new_item = Item(list_id=list_id,
+                    category_id=category_id,
+                    item_name=item_name,
+                    item_address=item_address,
+                    item_comments=item_comments)
+
+    db.session.add(new_item)
+    db.session.commit()
+
     return render_template("homepage.html")
-    # return render_template("add_items.html", 
-    #                         location_name=location_name, 
-    #                         list_name=list_name)
-
-
-# @app.route('/add_items', methods=["POST"])
-# def add_items():
-#     """create list as logged in user that saves to the db"""
-
-#     # flash("User" + user_id "is logged in" + list_id "and" + location_id)
-#     user_id = session['current_user']
-#     list_id = session['current_list']
-#     location_id = session['current_location']
-#     print session
-
-#     category_name = request.form.get("category_name")
-
-#     # query categories to get the id
-#     category_id = Category.query.filter_by(category_name=category_name).first()
-    
-
-#     db.session.add(category_id)
-#     #do I need the db.session add here?
-#     db.session.commit()
-    
-#     item_name = request.form.get("item_name")
-#     item_address = request.form.get("item_address")
-#     item_comments = request.form.get("item_comments")
-
-#     new_item = Item(item_name=item_name,
-#                     item_address=item_address,
-#                     item_comments=item_comments)
-
-#     db.session.add(new_item)
-#     db.session.commit()
-
-#     return render_template("homepage.html")
     # return render_template("list_detail.html",
-                        # list_name=list_name,
-                        # location_name=location_name,
                         # category_name=category_name,
                         # item_name=item_name,
                         # item_address=item_address,
@@ -249,3 +255,8 @@ if __name__ == "__main__":
     DebugToolbarExtension(app)
 
     app.run()
+
+
+
+
+
