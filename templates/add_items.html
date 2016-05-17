@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Add items to your List</h1>
+<h1>Add an item to your List</h1>
 
 List Name: {{ list_name }}
 <br> 
@@ -31,5 +31,18 @@ Add something to your list:
     Save Item <input type="submit">    
         <br>
 </form>
+
+<!-- <form>
+Would you like to add another item?
+<form action="/add_items">
+    <input type="radio" name="YN" value="yes">YES
+    <input type="radio" name="YN" value="no">NO
+    <input type="submit"> 
+</form> -->
+
+    <!-- input type="submit" name="button_1" value="Click me"> -->
+    <!-- <button type="submit" name="action" value="update">Update</button>
+
+    <button type="submit" name="action" value="new_item">Add Another Item</button> -->
 
 {% endblock %}

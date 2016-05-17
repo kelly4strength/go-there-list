@@ -139,9 +139,14 @@ def list_details(list_id):
 def create_list():
     """Send user to first list creation page""" 
 
+    #if statement needs to come before the session
+    #if user_id in session == NONE:
+        # redirect to ("login.html") 
+        # Flash ("please login before creating a list")
+
     flash("User is logged in")
     user_id = session['current_user']
-    print session
+    # print session
 
     return render_template("initiate_list.html")
 
@@ -188,8 +193,6 @@ def initiate_list():
     session['current_list'] = list.list_id
     print session
 
-    flash ("database updated with new list name")
-
     # return render_template("homepage.html")
     return render_template("add_items.html", 
                             location_name=location_name, 
@@ -200,7 +203,6 @@ def initiate_list():
 def add_items():
     """create list as logged in user that saves to the db"""
 
-    # flash("User" + user_id "is logged in" + list_id "and" + location_id)
     user_id = session['current_user']
     location_id = session['current_location']
     list_id = session['current_list']
@@ -210,16 +212,10 @@ def add_items():
     # query categories to get the id 
     category = Category.query.filter_by(category_name=category_name).first()
     
-    #adds to db
-    # db.session.add(category_id)
-    # db.session.commit()
-    
     session['current_category'] = category.category_id
-        # print session
+    # print session
     category_id = session['current_category']
     print session
-
-    # category = Category.query.filter_by(category_name=category_name).first()
     
     item_name = request.form.get("item_name")
     item_address = request.form.get("item_address")
@@ -234,12 +230,71 @@ def add_items():
     db.session.add(new_item)
     db.session.commit()
 
-    return render_template("homepage.html")
-    # return render_template("list_detail.html",
-                        # category_name=category_name,
-                        # item_name=item_name,
-                        # item_address=item_address,
-                        # item_comments=item_comments)
+    flash ("Your item has been added")
+
+    return render_template("new_item.html",
+                            list_id=list_id,
+                            location_id=location_id)
+    
+
+@app.route('/new_item', methods=["POST"])
+def new_item():
+    """ask user if they want to add another item"""
+    
+    user_id = session['current_user']
+    location_id = session['current_location']
+    list_id = session['current_list']
+
+    print session
+
+    YN = request.form.get("YN")
+ 
+    if YN == "yes":
+         return render_template("add_new_items.html", 
+                                list_id=list_id,
+                                location_id=location_id)
+
+    else:
+        return render_template("homepage.html")
+
+
+@app.route('/add_new_items', methods=["POST"])
+def add_new_items():
+    """add item to list"""
+
+    # user_id = session['current_user']
+    location_id = session['current_location']
+    list_id = session['current_list']
+    print session
+
+    category_name = request.form.get("category_name")
+    # query categories to get the id 
+    category = Category.query.filter_by(category_name=category_name).first()
+    
+    session['current_category'] = category.category_id
+    # print session
+    category_id = session['current_category']
+    print session
+    
+    item_name = request.form.get("item_name")
+    item_address = request.form.get("item_address")
+    item_comments = request.form.get("item_comments")
+
+    new_item = Item(list_id=list_id,
+                    category_id=category_id,
+                    item_name=item_name,
+                    item_address=item_address,
+                    item_comments=item_comments)
+
+    db.session.add(new_item)
+    db.session.commit()
+
+    flash ("Your item has been added")
+
+    return render_template("new_item.html",
+                            list_id=list_id,
+                            location_id=location_id)
+
 
 
 if __name__ == "__main__":
