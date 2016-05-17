@@ -13,8 +13,8 @@ app = Flask(__name__)
 # Required to use Flask sessions and the debug toolbar
 app.secret_key = "ABC"
 
-# Normally, if you use an undefined variable in Jinja2, it fails silently.
-# This is horrible. Fix this so that, instead, it raises an error.
+# Defining variable for Jinja2 to avoid it failing silently
+# This way it will raise an error.
 app.jinja_env.undefined = StrictUndefined
 
 
@@ -47,12 +47,6 @@ def login():
 
     return render_template("login.html")
 
-@app.route('/create_list')
-def create_list():
-    """Send user to list creation page""" 
-
-    return render_template("choose_location.html")
-
 
 @app.route('/register')
 def register():
@@ -79,14 +73,11 @@ def user_add():
 
         flash("User " + email + " is now registered")
 
-        session['current_user'] = new_user.user_id
+        session['user_id'] = new_user.user_id
+        print session
 
     return render_template("homepage.html")
-    # want this to reroute you to your user detail page?
-    #maybe need to add a query in here... like /lists
-    # return render_template("user_detail.html")
-    # return render_template("user_detail.html", user=user, lists=lists)
-
+   
 @app.route('/user_validation', methods=["POST"])
 def user_validation():
     """Validate user login"""
@@ -99,25 +90,28 @@ def user_validation():
     if user == None:
         flash("Looks like you need to register")
         return render_template("register.html")
+    
     elif user.password == password:
         session['current_user'] = user.user_id
         print session
+
         flash("User " + email + " signed in")
-        #should this also rereout to the user detail page?
+        # at some point make this render a "logged in User homepage"
         return render_template("homepage.html")
     else:
         flash("Password doesn't match. Try 1234")
         return render_template("login.html")
+
         
 @app.route('/logout')
 def log_user_out_of_session():
     """remove user from session"""
     
     session.clear()
-    print session
+    print "session cleared"
+    
     flash("you have logged out")
-    print session
-
+    
     return render_template("homepage.html")
 
 
@@ -128,83 +122,111 @@ def user_page(user_id):
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
 
-    # raise Exception("let's play")
-
     return render_template("user_detail.html", user=user, lists=lists)
+
 
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
 
-#queries here are to give the jinja the info it needs to render on the page?
     list = List.query.filter_by(list_id=list_id).first()
-    # session['current_list'] = list.list_id
-
     items = Item.query.filter_by(list_id=list_id).all()
 
-    # raise Exception("let's play")
     return render_template("list_detail.html", list=list, items=items)
 
 
-@app.route('/choose_location', methods=["POST"])
-def choose_location():
-    """choose location for new list as logged in user that saves to the db"""
+@app.route('/create_list')
+def create_list():
+    """Send user to first list creation page""" 
 
-# flash("User is logged in")
-# user_id = session['current_user']
+    flash("User is logged in")
+    user_id = session['current_user']
+    print session
+
+    return render_template("initiate_list.html")
+
+
+@app.route('/initiate_list', methods=["POST"])
+def initiate_list():
+    """choose location and new list name to add to the db"""
+
+    flash("User is logged in")
+    #session carried over - remember that thing I asked you to remember? Here it is.
+    user_id = session['current_user']
 
     location_name = request.form.get("location_name")
 
-    new_location = Location(location_name=location_name)
+    location = Location.query.filter_by(location_name=location_name).first()
 
-    db.session.add(new_location)
-    db.session.commit()
+    if location == None:
+        new_location = Location(location_name=location_name)
+        db.session.add(new_location)
+        db.session.commit()
 
-    return render_template("choose_list_name.html", location_name=location_name)
+        location = Location.query.filter_by(location_name=location_name).first()
 
+        #telling the session to please remember this now
+        session['current_location'] = location.location_id
+        print session
 
-@app.route('/choose_list_name', methods=["POST"])
-def choose_list_name():
-    """choose list name for new list as logged in user that saves to the db"""
-
-# flash("User is logged in")
-# user_id = session['current_user']
+    location_id = session['current_location']
 
     list_name = request.form.get("list_name")
 
-    new_list = List(list_name=list_name)
+    # if List.query.filter_by(user_id=user_id, location_id=location_id).first() == None:
+    new_list = List(user_id=user_id,
+                    location_id=location_id,
+                    list_name=list_name)
 
     db.session.add(new_list)
     db.session.commit()
 
-    return render_template("add_items.html")
 
-
-@app.route('/add_items', methods=["POST"])
-def add_items():
-    """create list as logged in user that saves to the db"""
-
-# flash("User is logged in")
-# user_id = session['current_user']
-
-    category_name = request.form.get("category_name")
-    item_name = request.form.get("item_name")
-    item_address = request.form.get("item_address")
-    item_comments = request.form.get("item_comments")
-
-    new_category = Category(category_name=category_name)
-
-    db.session.add(new_category)
-    db.session.commit()
-
-    new_item = Item(item_name=item_name,
-                    item_address=item_address,
-                    item_comments=item_comments)
-
-    db.session.add(new_item)
-    db.session.commit()
+    list = List.query.filter_by(list_name=list_name).first()
+    
+    #telling the session to please remember this now
+    session['current_list'] = list.list_id
+    
+    flash ("database updated with new list name")
 
     return render_template("homepage.html")
+    # return render_template("add_items.html", 
+    #                         location_name=location_name, 
+    #                         list_name=list_name)
+
+
+# @app.route('/add_items', methods=["POST"])
+# def add_items():
+#     """create list as logged in user that saves to the db"""
+
+#     # flash("User" + user_id "is logged in" + list_id "and" + location_id)
+#     user_id = session['current_user']
+#     list_id = session['current_list']
+#     location_id = session['current_location']
+#     print session
+
+#     category_name = request.form.get("category_name")
+
+#     # query categories to get the id
+#     category_id = Category.query.filter_by(category_name=category_name).first()
+    
+
+#     db.session.add(category_id)
+#     #do I need the db.session add here?
+#     db.session.commit()
+    
+#     item_name = request.form.get("item_name")
+#     item_address = request.form.get("item_address")
+#     item_comments = request.form.get("item_comments")
+
+#     new_item = Item(item_name=item_name,
+#                     item_address=item_address,
+#                     item_comments=item_comments)
+
+#     db.session.add(new_item)
+#     db.session.commit()
+
+#     return render_template("homepage.html")
     # return render_template("list_detail.html",
                         # list_name=list_name,
                         # location_name=location_name,

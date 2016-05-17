@@ -61,7 +61,7 @@ def sample_data():
 	category3 = Category(category_name='bar')
 
 	db.session.add_all([category1,
-	                    category2,
+	         	        category2,
 	                    category3])
 
 	db.session.commit()
