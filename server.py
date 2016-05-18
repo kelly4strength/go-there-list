@@ -93,9 +93,7 @@ def user_validation():
     elif user.password == password:
         session['current_user'] = user.user_id
         print session
-
         flash("User " + email + " signed in")
-        # at some point make this render a "logged in User homepage"
         return render_template("homepage.html")
     else:
         flash("Password doesn't match. Try 1234")
@@ -108,7 +106,6 @@ def log_user_out_of_session():
     
     session.clear()
     print "session cleared"
-    
     flash("you have logged out")
     
     return render_template("homepage.html")
@@ -121,12 +118,17 @@ def user_page(user_id):
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
 
-    return render_template("user_detail.html", user=user, lists=lists)
+    return render_template("user_detail.html", 
+                            user=user, 
+                            lists=lists)
 
 
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
+
+    #if current user owns this list
+    #show the add items button
 
     list = List.query.filter_by(list_id=list_id).first()
     items = Item.query.filter_by(list_id=list_id).all()
@@ -163,7 +165,14 @@ def my_lists():
     user_id = session['current_user']
     print session
 
-    return render_template("my_lists.html")
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
+    # items = Items.query.filter_by(list_id=list_id).all()
+    #decided I don't need list items here as it has links to list pages
+    return render_template("my_lists.html", 
+                            user=user, 
+                            lists=lists)
+
 
 
 @app.route('/initiate_list', methods=["POST"])
@@ -261,6 +270,8 @@ def new_item():
     list_id = session['current_list']
 
     print session
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
 
     YN = request.form.get("YN")
  
@@ -268,9 +279,11 @@ def new_item():
          return render_template("add_new_items.html", 
                                 list_id=list_id,
                                 location_id=location_id)
+    
+    return render_template("my_lists.html",
+                                user=user, 
+                                lists=lists)
 
-    else:
-        return render_template("homepage.html")
 
 
 @app.route('/add_new_items', methods=["POST"])
