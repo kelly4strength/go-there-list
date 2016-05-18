@@ -5,25 +5,19 @@
     <div>
         <ul>
             <li>User Name: {{ user.user_name }}</li> 
-            <li>User email: {{ user.email }}</li>
-
-      <h2>List Info</h2>
-    <div>
-        <ul>
+            <!-- <li>User email: {{ user.email }}</li>   -->
         {% for list in lists %}
-            <li>List Name: {{ list.list_name }}, {{list.location.location_name}}</li>
-              
-        {% for item in items %}
-            <li>Items: {{ item.item_name }}, {{ item.item_address }}, {{ item.item_comments }}, {{ item.category.category_name }}</li>
+
+            <li>City: {{list.location.location_name}}
+                <ul><li>List Name: <a href="/lists/{{ list.list_id }}">
+                {{ list.list_name}}</a></li></ul>
+            </li>
       
         {% endfor %}
-        {% endfor %}
-        </ul>
-    </div>
+        </ul> 
 
 
-<!-- Want to show the Users lists here, ordered by City, City ordered alphabetically
-They should be clickable links to the list detail pages -->
+<!-- Want to show the Users lists here, ordered by City, City ordered alphabetically -->
 
     </div>
 

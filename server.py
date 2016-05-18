@@ -120,25 +120,20 @@ def user_page(user_id):
 
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
-#NEED TO WORK ON THIS
-    # list_id = List.query.filter_by(user_id=user_id).first()
-    # items = Item.query.filter_by(list_id=list_id).all()
 
-
-    return render_template("user_detail.html", 
-                            user=user, 
-                            lists=lists)
-                            # items=items)
+    return render_template("user_detail.html", user=user, lists=lists)
 
 
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
 
-    lists = List.query.filter_by(list_id=list_id).first()
+    list = List.query.filter_by(list_id=list_id).first()
     items = Item.query.filter_by(list_id=list_id).all()
 
-    return render_template("list_detail.html", list=list, items=items)
+    return render_template("list_detail.html", 
+                            list=list, 
+                            items=items)
 
 
 @app.route('/create_list')
