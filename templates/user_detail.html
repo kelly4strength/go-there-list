@@ -7,11 +7,19 @@
             <li>User Name: {{ user.user_name }}</li> 
             <li>User email: {{ user.email }}</li>
 
+      <h2>List Info</h2>
+    <div>
+        <ul>
         {% for list in lists %}
-            <li>Lists: {{ list.list_name}}, {{list.location.location_name}}</li>
-            
+            <li>List Name: {{ list.list_name }}, {{list.location.location_name}}</li>
+              
+        {% for item in items %}
+            <li>Items: {{ item.item_name }}, {{ item.item_address }}, {{ item.item_comments }}, {{ item.category.category_name }}</li>
+      
         {% endfor %}
-        </ul> 
+        {% endfor %}
+        </ul>
+    </div>
 
 
 <!-- Want to show the Users lists here, ordered by City, City ordered alphabetically

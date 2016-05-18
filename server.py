@@ -58,7 +58,6 @@ def register():
 @app.route('/user_add', methods=["POST"])
 def user_add():
     """add new users to dbase"""
-    # ADD a Flask flash message 
 
     email = request.form.get("email")
     password = request.form.get("password")
@@ -121,15 +120,22 @@ def user_page(user_id):
 
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
+#NEED TO WORK ON THIS
+    # list_id = List.query.filter_by(user_id=user_id).first()
+    # items = Item.query.filter_by(list_id=list_id).all()
 
-    return render_template("user_detail.html", user=user, lists=lists)
+
+    return render_template("user_detail.html", 
+                            user=user, 
+                            lists=lists)
+                            # items=items)
 
 
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
 
-    list = List.query.filter_by(list_id=list_id).first()
+    lists = List.query.filter_by(list_id=list_id).first()
     items = Item.query.filter_by(list_id=list_id).all()
 
     return render_template("list_detail.html", list=list, items=items)
@@ -139,16 +145,30 @@ def list_details(list_id):
 def create_list():
     """Send user to first list creation page""" 
 
-    #if statement needs to come before the session
-    #if user_id in session == NONE:
-        # redirect to ("login.html") 
-        # Flash ("please login before creating a list")
+    if session.get('current_user') == None:
+        flash ("please login before creating a list")
+        return render_template("login.html") 
 
     flash("User is logged in")
     user_id = session['current_user']
-    # print session
+    print session
 
     return render_template("initiate_list.html")
+
+
+@app.route('/my_lists')
+def my_lists():
+    """Send user to their personal lists page""" 
+
+    if session.get('current_user') == None:
+        flash ("please login first")
+        return render_template("login.html") 
+
+    flash("User is logged in")
+    user_id = session['current_user']
+    print session
+
+    return render_template("my_lists.html")
 
 
 @app.route('/initiate_list', methods=["POST"])
@@ -235,7 +255,7 @@ def add_items():
     return render_template("new_item.html",
                             list_id=list_id,
                             location_id=location_id)
-    
+
 
 @app.route('/new_item', methods=["POST"])
 def new_item():
