@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Add an item to your List</h1>
-
+<h2>Add an item to your List</h2>
+<div>
 List Name: {{ list_id }}
-<br> 
-Location: {{location_id}}
-<br>        
 
-<form action="/add_new_items" method="POST">
+<form action="/add_another_item" method="POST">
 
 Add something to your list:
     Category:
@@ -31,5 +28,6 @@ Add something to your list:
     Save Item <input type="submit">    
         <br>
 </form>
+</div>
 
 {% endblock %}

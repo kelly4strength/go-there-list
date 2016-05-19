@@ -27,7 +27,7 @@ def index():
 
 @app.route("/users")
 def user_list():
-    """Show list of users."""
+    """Show all users."""
 
     users = User.query.all()
     return render_template("user_list.html", users=users)
@@ -35,10 +35,10 @@ def user_list():
 
 @app.route("/lists")
 def all_lists():
-    """Show list of lists."""
+    """Show all user lists."""
 
     lists = List.query.order_by('list_name').all()
-    return render_template("all_lists.html", lists=lists)
+    return render_template("alL_lists.html", lists=lists)
 
 
 @app.route('/login')
@@ -118,6 +118,8 @@ def user_page(user_id):
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
 
+    print session
+
     return render_template("user_detail.html", 
                             user=user, 
                             lists=lists)
@@ -130,32 +132,20 @@ def list_details(list_id):
     #if current user owns this list
     #show the add items button
 
-    list = List.query.filter_by(list_id=list_id).first()
+    lists = List.query.filter_by(list_id=list_id).first()
     items = Item.query.filter_by(list_id=list_id).all()
 
-    return render_template("list_detail.html", 
-                            list=list, 
-                            items=items)
-
-
-@app.route('/create_list')
-def create_list():
-    """Send user to first list creation page""" 
-
-    if session.get('current_user') == None:
-        flash ("please login before creating a list")
-        return render_template("login.html") 
-
-    flash("User is logged in")
-    user_id = session['current_user']
+    session['current_list'] = list_id
     print session
 
-    return render_template("initiate_list.html")
+    return render_template("list_detail.html", 
+                            lists=lists, 
+                            items=items)
 
 
 @app.route('/my_lists')
 def my_lists():
-    """Send user to their personal lists page""" 
+    """Show all lists created by user""" 
 
     if session.get('current_user') == None:
         flash ("please login first")
@@ -174,10 +164,24 @@ def my_lists():
                             lists=lists)
 
 
+@app.route('/create_list')
+def create_list():
+    """Form to create a new list, choose location and list name""" 
 
-@app.route('/initiate_list', methods=["POST"])
-def initiate_list():
-    """choose location and new list name to add to the db"""
+    if session.get('current_user') == None:
+        flash ("please login before creating a list")
+        return render_template("login.html") 
+
+    flash("User is logged in")
+    user_id = session['current_user']
+    print session
+
+    return render_template("create_list.html")
+
+
+@app.route('/create_list', methods=["POST"])
+def start_new_list():
+    """Add first item to newly created list"""
 
     flash("User is logged in")
     #session carried over - remember that thing I asked you to remember? Here it is.
@@ -211,21 +215,21 @@ def initiate_list():
     db.session.add(new_list)
     db.session.commit()
 
-    list = List.query.filter_by(list_name=list_name).first()
+    lists = List.query.filter_by(list_name=list_name).first()
     
     #telling the session to please remember this now
-    session['current_list'] = list.list_id
+    session['current_list'] = lists.list_id
     print session
 
     # return render_template("homepage.html")
-    return render_template("add_items.html", 
+    return render_template("add_first_item.html", 
                             location_name=location_name, 
                             list_name=list_name)
 
 
-@app.route('/add_items', methods=["POST"])
-def add_items():
-    """create list as logged in user that saves to the db"""
+@app.route('/add_first_item', methods=["POST"])
+def add_first_item():
+    """um something"""
 
     user_id = session['current_user']
     location_id = session['current_location']
@@ -237,7 +241,6 @@ def add_items():
     category = Category.query.filter_by(category_name=category_name).first()
     
     session['current_category'] = category.category_id
-    # print session
     category_id = session['current_category']
     print session
     
@@ -263,10 +266,10 @@ def add_items():
 
 @app.route('/new_item', methods=["POST"])
 def new_item():
-    """ask user if they want to add another item"""
+    """Form to ask user if they want to add another item"""
     
     user_id = session['current_user']
-    location_id = session['current_location']
+    # location_id = session['current_location'] (needed this for previous route, may reinstate)
     list_id = session['current_list']
 
     print session
@@ -277,21 +280,19 @@ def new_item():
  
     if YN == "yes":
          return render_template("add_new_items.html", 
-                                list_id=list_id,
-                                location_id=location_id)
+                                list_id=list_id)
     
     return render_template("my_lists.html",
                                 user=user, 
                                 lists=lists)
 
 
-
-@app.route('/add_new_items', methods=["POST"])
-def add_new_items():
+@app.route('/add_another_item', methods=["POST"])
+def add_another_item():
     """add item to list"""
 
-    # user_id = session['current_user']
-    location_id = session['current_location']
+    user_id = session['current_user']
+    # location_id = session['current_location']
     list_id = session['current_list']
     print session
 
@@ -320,8 +321,17 @@ def add_new_items():
     flash ("Your item has been added")
 
     return render_template("new_item.html",
-                            list_id=list_id,
-                            location_id=location_id)
+                            list_id=list_id)
+
+
+@app.route('/add_item_to_existing_list')
+def add_item_to_existing_list():
+    """Add item to existing list"""
+
+    list_id = session['current_list']
+
+    return render_template("add_new_items.html",
+                            list_id=list_id)
 
 
 

@@ -1,24 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
 
-        <h2>List Info</h2>
+<h2>List Info</h2>
     <div>
+        <!-- want to hide this link if the list_id doesn't belong to user_id in session -->
+    <h3><a href="/add_item_to_existing_list">Add an item to your list</a><h3>
+        
         <ul>
-            <li>List Name: {{ list.list_name }}, {{list.location.location_name}}</li>
-              
-        {% for item in items %}
-            <li>Items: {{ item.item_name }}, {{ item.item_address }}, {{ item.item_comments }}, {{ item.category.category_name }}</li>
-      
-        {% endfor %}
+            <li>List Name: {{ lists.list_name }}</li>
+            <li>{{ lists.location.location_name}}</li>
+
+            {% for item in items %}
+            <li>Category: {{ item.category.category_name }}</li> 
+            <li>Item Name: {{ item.item_name }}</li> 
+            <li>Address: {{ item.item_address }}</li> 
+            <li>Comments: {{ item.item_comments }}</li>     
+            {% endfor %}
+            
         </ul>
+
     </div>
 
 {% endblock %}
 
- 
-
-<!-- Want to show the lists details here, 
-with the items shown individually
-***Can I make the item_addres a clickable link or use the googlemaps API 
-to show each item on a map - though the address should be clickable and the map will render whichever address you click on -->
 

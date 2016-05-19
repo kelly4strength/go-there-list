@@ -1,13 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Add another item to your List?</h1>
-
-List Name: {{ list_id }}
-<br> 
-Location: {{ location_id }}
-<br>        
-
+<h2>Add another item to your List?</h2>
+<div>
+List ID: {{ list_id }}
+<br>
 Would you like to add another item to your list?
 
 <form action="/new_item" method="POST">
@@ -15,4 +12,5 @@ Would you like to add another item to your list?
     <input type="radio" name="YN" value="no">NO
     <input type="submit"> 
 </form>
+</div>
 {% endblock %}

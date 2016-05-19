@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Add an item to your List</h2>
+    <div>
+        List Name: {{ list_name }}
+        <br> 
+        Location: {{location_name}}
+        <br>        
+        <form action="/add_first_item" method="POST">
+            Category:
+                <select name="category_name">
+                    <option value="restaurant">Restaurant</option>
+                    <option value="bar">Bar</option>
+                    <option value="museum">Museum</option>
+                </select>  
+                <br>
+                <br>
+            Name <input type="text" name="item_name">
+                <br>
+                <br>       
+            Address <input type="text" name="item_address">
+                <br>
+                <br>       
+            Comments <input type="text" name="item_comments">
+                <br>
+                <br>
+            Save Item <input type="submit">    
+                <br>
+        </form>
+    </div>
+{% endblock %}
