@@ -89,8 +89,8 @@ class Item(db.Model):
 
     item_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     item_name = db.Column(db.String(100))
-    item_comments = db.Column(db.String(100))
-    item_address = db.Column(db.String(100))
+    item_comments = db.Column(db.String(1000))
+    item_address = db.Column(db.String(1000))
     list_id = db.Column(db.Integer, db.ForeignKey('lists.list_id'))
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
     

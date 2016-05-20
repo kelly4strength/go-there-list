@@ -23,7 +23,7 @@
 
             {% for item in items %}
             <!-- make item.item_name a link -->
-            <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
+            <li>Item Name: <a href="/lists/{{ list.list_id }}">{{ item.item_name }}</li>
              <!-- Do I need to show the category? or is that just for the backend? -->
             <li>Category: {{ item.category.category_name }}</li> 
             <li>Address: {{ item.item_address }}</li> 

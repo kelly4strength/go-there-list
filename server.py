@@ -72,10 +72,12 @@ def user_add():
 
         flash("User " + email + " is now registered")
 
+        #This session message is assigning the value 6 to the user_id in the session
         session['user_id'] = new_user.user_id
         print session
-
-    return render_template("homepage.html")
+        
+        if session.get('user_id') == new_user.user_id:
+            return render_template("homepage.html")
    
 @app.route('/user_validation', methods=["POST"])
 def user_validation():
@@ -129,9 +131,6 @@ def user_page(user_id):
 def list_details(list_id):
     """Take user to a page that displays a list"""
 
-    #if current user owns this list
-    #show the add items button
-
     lists = List.query.filter_by(list_id=list_id).first()
     items = Item.query.filter_by(list_id=list_id).all()
 
@@ -141,6 +140,24 @@ def list_details(list_id):
     return render_template("list_detail.html", 
                             lists=lists, 
                             items=items)
+
+
+@app.route('/item_detail/<int:item_id>')
+def item_details(item_id):
+    """Take user to a page that displays a list"""
+
+    # item = Item.query.filter_by(list_id=list_id).first()
+    session['current_list'] = list_id
+
+    session['current_item'] = item_id
+    list_id = List.query.filter_by(list_id=list_id).first()
+    # session['current_user'] = user_id
+    print session
+
+    return render_template("list_detail.html", 
+                            lists=lists, 
+                            items=items)
+
 
 
 @app.route('/my_lists')
@@ -157,6 +174,7 @@ def my_lists():
 
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
+
     # items = Items.query.filter_by(list_id=list_id).all()
     #decided I don't need list items here as it has links to list pages
     return render_template("my_lists.html", 
@@ -176,10 +194,10 @@ def create_list():
     user_id = session['current_user']
     print session
 
-    return render_template("create_list.html")
+    return render_template("create_list_form.html")
 
 
-@app.route('/create_list', methods=["POST"])
+@app.route('/create_list_form', methods=["POST"])
 def start_new_list():
     """Add first item to newly created list"""
 
@@ -219,18 +237,7 @@ def start_new_list():
     
     #telling the session to please remember this now
     session['current_list'] = lists.list_id
-    print session
-
-    # return render_template("homepage.html")
-    return render_template("add_first_item.html", 
-                            location_name=location_name, 
-                            list_name=list_name)
-
-
-@app.route('/add_first_item', methods=["POST"])
-def add_first_item():
-    """um something"""
-
+    
     user_id = session['current_user']
     location_id = session['current_location']
     list_id = session['current_list']
@@ -277,7 +284,8 @@ def new_item():
     lists = List.query.filter_by(user_id=user_id).all()
 
     YN = request.form.get("YN")
- 
+
+# browser says: http://localhost:5000/new_item for either option 
     if YN == "yes":
          return render_template("add_new_items.html", 
                                 list_id=list_id)
@@ -328,10 +336,13 @@ def add_another_item():
 def add_item_to_existing_list():
     """Add item to existing list"""
 
+    user_id = session['current_user']
     list_id = session['current_list']
 
+    lists = List.query.filter_by(user_id=user_id).all()
+
     return render_template("add_new_items.html",
-                            list_id=list_id)
+                                list_id=list_id)
 
 
 
