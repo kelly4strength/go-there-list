@@ -75,7 +75,8 @@ def user_add():
         #This session message is assigning the value 6 to the user_id in the session
         session['user_id'] = new_user.user_id
         print session
-        
+        user_id = session['current_user']
+
         if session.get('user_id') == new_user.user_id:
             return render_template("homepage.html")
    
@@ -146,17 +147,24 @@ def list_details(list_id):
 def item_details(item_id):
     """Take user to a page that displays a list"""
 
-    # item = Item.query.filter_by(list_id=list_id).first()
-    session['current_list'] = list_id
+
+    #things in the session at this point
+    user_id = session['current_user']
+    list_id = session['current_list']
+
+    item = Item.query.filter_by(item_id=item_id).first()
 
     session['current_item'] = item_id
-    list_id = List.query.filter_by(list_id=list_id).first()
+    
+
+    
+    lists = List.query.filter_by(list_id=list_id).first()
     # session['current_user'] = user_id
     print session
-
-    return render_template("list_detail.html", 
+    
+    return render_template("item_detail.html", 
                             lists=lists, 
-                            items=items)
+                            item=item)
 
 
 
