@@ -72,13 +72,7 @@ def user_add():
 
         flash("User " + email + " is now registered")
 
-        #This session message is assigning the value 6 to the user_id in the session
-        session['user_id'] = new_user.user_id
-        print session
-        user_id = session['current_user']
-
-        if session.get('user_id') == new_user.user_id:
-            return render_template("homepage.html")
+        return render_template("homepage.html")
    
 @app.route('/user_validation', methods=["POST"])
 def user_validation():
@@ -145,8 +139,7 @@ def list_details(list_id):
 
 @app.route('/item_detail/<int:item_id>')
 def item_details(item_id):
-    """Take user to a page that displays a list"""
-
+    """Take user to a page that displays the item in their list"""
 
     #things in the session at this point
     user_id = session['current_user']
@@ -156,8 +149,6 @@ def item_details(item_id):
 
     session['current_item'] = item_id
     
-
-    
     lists = List.query.filter_by(list_id=list_id).first()
     # session['current_user'] = user_id
     print session
@@ -165,6 +156,13 @@ def item_details(item_id):
     return render_template("item_detail.html", 
                             lists=lists, 
                             item=item)
+
+
+# #edit an item you own route
+# @app.route('/edit_item_detail/<int:item_id>')
+# def edit_item_details(item_id):
+#     """Take user to a page that displays a list"""
+# email = request.form.get("email")
 
 
 
