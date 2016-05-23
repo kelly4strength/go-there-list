@@ -18,26 +18,21 @@
             <li>Location: {{ lists.location.location_name }}</li>
         <ul>
                 <br>
-
+ <form action="/delete_item_from_list" method="POST">
+            <!-- add a popup for are you sure? cannot be recovered... -->
+            <!-- this doesn't work because there are multiple items on the page -->
             {% for item in items %}
             <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
              <!-- Do I need to show the category? or is that just for the backend? -->
             <li>Category: {{ item.category.category_name }}</li> 
             <li>Address: {{ item.item_address }}</li> 
             <li>Comments: {{ item.item_comments }}</li> 
-
-            <form action="/delete_item_from_list" method="POST">
-            Delete this item: {{ item.item_id }}<input type="checkbox" id="myCheck">
-
-            <!-- add a popup for are you sure? cannot be recovered... -->
-            <!-- this doesn't work because there are multiple items on the page -->
-            <input type="submit">    
-                <br>
-            </form>
-
+            Delete this item: {{ item.item_id }}<input type="checkbox" name="delete_item_ids" id="check{{ item.item_id }}" value="{{ item.item_id }}">
             <br>   
             {% endfor %}
-
+ 
+<input type="submit">    
+ </form>
             </ul> 
         </ul>
     </div>

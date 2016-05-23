@@ -221,18 +221,24 @@ def delete_item():
 
 
 @app.route('/delete_item_from_list', methods=["POST"])
-def delete_item():
+def delete_item_from_list():
     """delete an item in your list"""
 
     user_id= session['current_user']
     list_id = session['current_list']
-    
-    #assume that there are a list of ids here
-    item_id[] = Item.query.filter_by(list_id=list_id).all()
-    
-    print session
 
-    db.session.delete(item_to_delete)
+    item_id = request.form.get("delete_item_ids")
+    print item_id
+    print type(item_id)
+
+    item_id = int(item_id)
+    
+    to_delete = Item.query.filter_by(item_id=item_id).first()
+    
+    # assume that there are a list of ids here
+    # Item.query.filter_by(item_id=item_id).all(item_id) 
+
+    db.session.delete(to_delete)
     db.session.commit()
 
     flash ("Your item has been deleted")
@@ -243,9 +249,9 @@ def delete_item():
                             user=user, 
                             lists=lists)
 
-@app.route('/copy_item', methods=["POST"])
-def copy_item():
-    """copy an item into a list"""
+# @app.route('/copy_item', methods=["POST"])
+# def copy_item():
+#     """copy an item into a list"""
 
 
 
