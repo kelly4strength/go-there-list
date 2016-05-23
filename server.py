@@ -161,7 +161,7 @@ def item_details(item_id):
 
 @app.route('/edit_item_detail', methods=["POST"])
 def edit_item():
-    """Take user to a page that displays a list"""
+    """user can edit item in their list"""
 
     user_id = session['current_user']
     list_id = session['current_list']
@@ -193,6 +193,62 @@ def edit_item():
     return render_template("my_lists.html", 
                             user=user, 
                             lists=lists)
+
+
+@app.route('/delete_item', methods=["POST"])
+def delete_item():
+    """delete an item in your list"""
+
+    user_id= session['current_user']
+    list_id = session['current_list']
+    item_id = session['current_item']
+    
+    print session
+
+    to_delete = Item.query.filter_by(item_id=item_id).first()
+    # for i in to_delete:
+    # Item.to_delete.delete()
+    db.session.delete(to_delete)
+    db.session.commit()
+
+    flash ("Your item has been deleted")
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
+
+    return render_template("my_lists.html", 
+                            user=user, 
+                            lists=lists)
+
+
+@app.route('/delete_item_from_list', methods=["POST"])
+def delete_item():
+    """delete an item in your list"""
+
+    user_id= session['current_user']
+    list_id = session['current_list']
+    
+    #assume that there are a list of ids here
+    item_id[] = Item.query.filter_by(list_id=list_id).all()
+    
+    print session
+
+    db.session.delete(item_to_delete)
+    db.session.commit()
+
+    flash ("Your item has been deleted")
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
+
+    return render_template("my_lists.html", 
+                            user=user, 
+                            lists=lists)
+
+@app.route('/copy_item', methods=["POST"])
+def copy_item():
+    """copy an item into a list"""
+
+
+
 
 @app.route('/my_lists')
 def my_lists():

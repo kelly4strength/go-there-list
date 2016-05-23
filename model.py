@@ -101,8 +101,8 @@ class Item(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Item item_id=%s item_name=%s item address_id=%s list_id=%s, category_id=%s>" % (
-            self.item_id, self.item_name, self.item_address, self.list_id, self.category_id)
+        return "<Item item_id=%s item_name=%s item address_id=%s item_comments=%s list_id=%s, category_id=%s>" % (
+            self.item_id, self.item_name, self.item_address, self.item_comments, self.list_id, self.category_id)
 
 
 ##############################################################################

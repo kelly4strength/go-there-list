@@ -26,11 +26,14 @@
             <li>Address: {{ item.item_address }}</li> 
             <li>Comments: {{ item.item_comments }}</li> 
 
-<form action="/create_list_form" method="POST">
-Look a checkbox <input type="checkbox" id="myCheck">
-<input type="submit">    
-    <br>
-</form>
+            <form action="/delete_item_from_list" method="POST">
+            Delete this item: {{ item.item_id }}<input type="checkbox" id="myCheck">
+
+            <!-- add a popup for are you sure? cannot be recovered... -->
+            <!-- this doesn't work because there are multiple items on the page -->
+            <input type="submit">    
+                <br>
+            </form>
 
             <br>   
             {% endfor %}
