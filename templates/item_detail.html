@@ -16,18 +16,23 @@
         <li>Location: {{ lists.location.location_name }}</li>
     <ul>
         <br>
-        <form action="/add_another_item" method="POST">
+        <form action='/edit_item_detail' method="POST">
             <!-- make item.item_name a link -->
-            <li>Item Name: <input type="text" name="item_name" value="{{ item.item_name }}"><br></li>
+            <li>Item Name: <input type="text" name="item_name" 
+                value="{{ item.item_name }}"><br></li>
+
             <li>Category:{{ item.category.category_name }} 
             <select name="category_name">
                 <option value="restaurant">Restaurant</option>
                 <option value="bar">Bar</option>
                 <option value="museum">Museum</option>
-            </select>  </li>
+            </select></li>
             <br>
-            <li>Address: <input type="text" name="item_address"value="{{ item.item_address }}"><br></li> 
-            <li>Comments:<input type="text" name="item_comments" value="{{ item.item_comments }}"><br></li> 
+            <li>Address: <input type="text" name="item_address" 
+                value="{{ item.item_address }}"><br></li> 
+            <br>
+            <li>Comments:<input type="text" name="item_comments" 
+                value="{{ item.item_comments }}"><br></li> 
             <br>
                 Save Item <input type="submit">    
             <br>

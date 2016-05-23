@@ -144,6 +144,7 @@ def item_details(item_id):
     #things in the session at this point
     user_id = session['current_user']
     list_id = session['current_list']
+    category_id = session['current_category']
 
     item = Item.query.filter_by(item_id=item_id).first()
 
@@ -158,13 +159,40 @@ def item_details(item_id):
                             item=item)
 
 
-# #edit an item you own route
-# @app.route('/edit_item_detail/<int:item_id>')
-# def edit_item_details(item_id):
-#     """Take user to a page that displays a list"""
-# email = request.form.get("email")
+@app.route('/edit_item_detail', methods=["POST"])
+def edit_item():
+    """Take user to a page that displays a list"""
 
+    user_id = session['current_user']
+    list_id = session['current_list']
+    item_id = session['current_item']
+    
+    print session
 
+    update = Item.query.filter_by(item_id=item_id).first()
+
+    category_name = request.form.get("category_name")
+    category = Category.query.filter_by(category_name=category_name).first()
+    category_id = category.category_id
+
+    item_name = request.form.get("item_name")
+    item_address = request.form.get("item_address")
+    item_comments = request.form.get("item_comments")
+    
+    update.category_id = category_id
+    update.item_name = item_name
+    update.item_address = item_address
+    update.item_comments = item_comments
+
+    db.session.commit()
+
+    flash ("Your item has been updated")
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
+    
+    return render_template("my_lists.html", 
+                            user=user, 
+                            lists=lists)
 
 @app.route('/my_lists')
 def my_lists():
