@@ -3,47 +3,48 @@
 
 <h2>Item Detail</h2>
     <div>
-<!-- want to hide this link if the list_id doesn't belong to user_id in session -->
+        <!-- want to hide this link if the list_id doesn't belong to user_id in session -->
 
-    {% if session.get('current_user') == lists.user_id %}
-    {% endif %}
+    <!-- for user_id in session
+    if user_id.session.get !== List.user_id
+    don't show the add item link -->
 
-    <ul>
-        <li>List Name: {{ lists.list_name }}</li>
-        <li>Location: {{ lists.location.location_name }}</li>
-            <ul>
+
+        <ul>
+            <li>List Name: {{ lists.list_name }}</li>
+            <li>Location: {{ lists.location.location_name }}</li>
+        <ul>
+        {% if session.get('current_user') != lists.user_id %}
+        <li>Item Name: {{ item.item_name }}<br></li>
+        <li>Category: {{ item.category.category_name }}</li>
+        <li>Address: {{ item.item_address }}<br></li> 
+        <li>Comments: {{ item.item_comments }}<br></li>
+        {% endif %}
+
+        {% if session.get('current_user') == lists.user_id %}
+            <br>
+            <form action="/add_another_item" method="POST">
+                <!-- make item.item_name a link -->
+                <li>Item Name: <input type="text" name="item_name" value="{{ item.item_name }}"><br></li>
+                <li>Category:{{ item.category.category_name }} 
+                <select name="category_name">
+                    <option value="restaurant">Restaurant</option>
+                    <option value="bar">Bar</option>
+                    <option value="museum">Museum</option>
+                </select>  </li>
                 <br>
-                <form action='/edit_item_detail' method="POST">
-                    <!-- make item.item_name a link -->
-                    <li>Item Name: <input type="text" name="item_name" 
-                        value="{{ item.item_name }}"><br></li>
+                <li>Address: <input type="text" name="item_address"value="{{ item.item_address }}"><br></li> 
+                <li>Comments:<input type="text" name="item_comments" value="{{ item.item_comments }}"><br></li> 
+                <br>
+                Save Item <input type="submit">    
+                <br>
+            </form>
+        {% endif %}
+            </ul> 
+        </ul>
+    </div>
 
-                    <li>Category:{{ item.category.category_name }} 
-                        <select name="category_name">
-                            <option value="restaurant">Restaurant</option>
-                            <option value="bar">Bar</option>
-                            <option value="museum">Museum</option>
-                        </select></li>
-                    <br>
-                    <li>Address: <input type="text" name="item_address" 
-                        value="{{ item.item_address }}"><br></li> 
-                    <br>
-                    <li>Comments:<input type="text" name="item_comments" 
-                        value="{{ item.item_comments }}"><br></li> 
-                    <br>
-                        Save Item <input type="submit">    
-                    <br>
-                </form>
-            </ul>     
-    </ul>
-   
-    <form action="/delete_item" method="POST">
-        Look a checkbox for deleting <input type="checkbox" id="myCheck">
-        <!-- add a popup for are you sure? cannot be recovered... -->
-        <input type="submit">    
-        <br>
-    </form>
-</div>
+
 {% endblock %}
 
 

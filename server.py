@@ -144,7 +144,7 @@ def item_details(item_id):
     #things in the session at this point
     user_id = session['current_user']
     list_id = session['current_list']
-    category_id = session['current_category']
+    # category_id = session['current_category']
 
     item = Item.query.filter_by(item_id=item_id).first()
 
@@ -224,9 +224,10 @@ def delete_item():
 @app.route('/delete_items_from_list', methods=["POST"])
 def delete_items_from_list():
     """delete item(s) from your list_detail page"""
-
+    #things in the session at this point
     user_id= session['current_user']
-    list_id = session['current_list']
+    list_id = session['current_list']   
+    category_id = session['current_category']
 
     ids = request.form.getlist("delete_item_ids")
     # print ids
@@ -260,11 +261,6 @@ def copy_items_from_list():
 
     to_copy = Item.query.filter_by(item_id=item_id).first()
 
-
-    #things in the session at this point
-    # user_id = session['current_user']
-    # list_id = session['current_list']
-    # category_id = session['current_category']
 
     # item = Item.query.filter_by(item_id=item_id).first()
 
