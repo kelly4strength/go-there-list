@@ -14,41 +14,46 @@
     <ul>
         <li>List Name: {{ lists.list_name }}</li>
         <li>Location: {{ lists.location.location_name }}</li>
-    <ul>
-        <br>
-        <form action='/edit_item_detail' method="POST">
-            <!-- make item.item_name a link -->
-            <li>Item Name: <input type="text" name="item_name" 
-                value="{{ item.item_name }}"><br></li>
+            <ul>
+                <br>
+                <form action='/edit_item_detail' method="POST">
+                    <!-- make item.item_name a link -->
+                    <li>Item Name: <input type="text" name="item_name" 
+                        value="{{ item.item_name }}"><br></li>
 
-            <li>Category:{{ item.category.category_name }} 
-            <select name="category_name">
-                <option value="restaurant">Restaurant</option>
-                <option value="bar">Bar</option>
-                <option value="museum">Museum</option>
-            </select></li>
-            <br>
-            <li>Address: <input type="text" name="item_address" 
-                value="{{ item.item_address }}"><br></li> 
-            <br>
-            <li>Comments:<input type="text" name="item_comments" 
-                value="{{ item.item_comments }}"><br></li> 
-            <br>
-                Save Item <input type="submit">    
-            <br>
-        </form>
-
-            </ul> 
-        </ul>
+                    <li>Category:{{ item.category.category_name }} 
+                        <select name="category_name">
+                            <option value="restaurant">Restaurant</option>
+                            <option value="bar">Bar</option>
+                            <option value="museum">Museum</option>
+                        </select></li>
+                    <br>
+                    <li>Address: <input type="text" name="item_address" 
+                        value="{{ item.item_address }}"><br></li> 
+                    <br>
+                    <li>Comments:<input type="text" name="item_comments" 
+                        value="{{ item.item_comments }}"><br></li> 
+                    <br>
+                        Save Item <input type="submit">    
+                    <br>
+                </form>
+            </ul>     
+    </ul>
    
-<form action="/delete_item" method="POST">
-Look a checkbox for deleting <input type="checkbox" id="myCheck">
-<!-- add a popup for are you sure? cannot be recovered... -->
-
-<input type="submit">    
-    <br>
-</form>
- </div>
+    <form action="/delete_item" method="POST">
+        Look a checkbox for deleting <input type="checkbox" id="myCheck">
+        <!-- add a popup for are you sure? cannot be recovered... -->
+        <input type="submit">    
+        <br>
+    </form>
+<br>
+<br>
+    <form action="/copy_item" method="POST">
+        COPY!<input type="checkbox" name="copy_item" id="check{{ item.item_id }}" value="{{ item.item_id }}">
+        <input type="submit">    
+        <br>
+    </form>
+</div>
 {% endblock %}
 
 

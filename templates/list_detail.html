@@ -3,41 +3,36 @@
 
 <h2>List Info</h2>
     <div>
-        <!-- want to hide this link if the list_id doesn't belong to user_id in session -->
-
-    <!-- for user_id in session
-    if user_id.session.get !== List.user_id
-    don't show the add item link -->
-
+        <!-- hides this link if the list_id doesn't belong to user_id in session -->
         {% if session.get('current_user') == lists.user_id %}
-            <button><a href="/add_item_to_existing_list" class="button" id="add_item">Add an item</a></button>
+        <button><a href="/add_item_to_existing_list" class="button" id="add_item">Add an item</a></button>
         {% endif %}
 
         <ul>
             <li>List Name: {{ lists.list_name }}</li>
             <li>Location: {{ lists.location.location_name }}</li>
         <ul>
-                <br>
- <form action="/delete_item_from_list" method="POST">
+            <br>
+            <form action="/delete_items_from_list" method="POST">
             <!-- add a popup for are you sure? cannot be recovered... -->
             <!-- this doesn't work because there are multiple items on the page -->
-            {% for item in items %}
-            <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
-             <!-- Do I need to show the category? or is that just for the backend? -->
-            <li>Category: {{ item.category.category_name }}</li> 
-            <li>Address: {{ item.item_address }}</li> 
-            <li>Comments: {{ item.item_comments }}</li> 
-            Delete this item: {{ item.item_id }}<input type="checkbox" name="delete_item_ids" id="check{{ item.item_id }}" value="{{ item.item_id }}">
-            <br>   
-            {% endfor %}
+                {% for item in items %}
+                    <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
+                     <!-- Do I need to show the category? or is that just for the backend? -->
+                    <li>Category: {{ item.category.category_name }}</li> 
+                    <li>Address: {{ item.item_address }}</li> 
+                    <li>Comments: {{ item.item_comments }}</li> 
+
+                        Delete this item: {{ item.item_id }} <input type="checkbox" name="delete_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
+                    <br> 
+                    <br>  
+                {% endfor %}
  
-<input type="submit">    
- </form>
-            </ul> 
-        </ul>
-    </div>
-
-
+                <input type="submit">    
+            </form>
+        </ul> 
+    </ul>
+</div>
 {% endblock %}
 
 
