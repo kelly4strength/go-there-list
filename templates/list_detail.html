@@ -14,25 +14,38 @@
         <ul>
             <br>
             <form action="/delete_items_from_list" method="POST">
-            <!-- add a popup for are you sure? cannot be recovered... -->
-            <!-- this doesn't work because there are multiple items on the page -->
+
+
+            <form action="/copy_items_from_list" method="POST">
+                
                 {% for item in items %}
                     <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
                      <!-- Do I need to show the category? or is that just for the backend? -->
                     <li>Category: {{ item.category.category_name }}</li> 
                     <li>Address: {{ item.item_address }}</li> 
                     <li>Comments: {{ item.item_comments }}</li> 
+                        
+                        Copy item: {{ item.item_id }} <input type="checkbox" name="copy_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
+                        <br>
 
-                        Delete this item: {{ item.item_id }} <input type="checkbox" name="delete_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
-                    <br> 
-                    <br>  
+
+                        {% if session.get('current_user') == lists.user_id %}
+                            Delete this item: {{ item.item_id }} <input type="checkbox" name="delete_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
+                            <br> 
+                            <br>  
+                        {% endif %}
+
+                    <br>
                 {% endfor %}
- 
-                <input type="submit">    
+                    {% if session.get('current_user') == lists.user_id %}
+                    <input type="submit" name="delete_submit_button" value="DELETE ALL"> 
+    <!-- add a popup for are you sure? cannot be recovered... -->
+                    {% endif %}
             </form>
+            <input type="submit" name="copy_submit_button" value="COPY ALL">
+        </form>
         </ul> 
     </ul>
 </div>
 {% endblock %}
-
 
