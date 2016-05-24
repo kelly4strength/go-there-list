@@ -28,7 +28,6 @@
                         Copy item: {{ item.item_id }} <input type="checkbox" name="copy_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
                         <br>
 
-
                         {% if session.get('current_user') == lists.user_id %}
                             Delete this item: {{ item.item_id }} <input type="checkbox" name="delete_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
                             <br> 
