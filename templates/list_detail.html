@@ -13,11 +13,7 @@
             <li>Location: {{ lists.location.location_name }}</li>
         <ul>
             <br>
-            <form action="/delete_items_from_list" method="POST">
-
-
-            <form action="/copy_items_from_list" method="POST">
-                
+             <form action="/copy_items" method="POST">
                 {% for item in items %}
                     <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
                      <!-- Do I need to show the category? or is that just for the backend? -->
@@ -27,20 +23,8 @@
                         
                         Copy item: {{ item.item_id }} <input type="checkbox" name="copy_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
                         <br>
-
-                        {% if session.get('current_user') == lists.user_id %}
-                            Delete this item: {{ item.item_id }} <input type="checkbox" name="delete_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
-                            <br> 
-                            <br>  
-                        {% endif %}
-
-                    <br>
+                        <br>
                 {% endfor %}
-                    {% if session.get('current_user') == lists.user_id %}
-                    <input type="submit" name="delete_submit_button" value="DELETE ALL"> 
-    <!-- add a popup for are you sure? cannot be recovered... -->
-                    {% endif %}
-            </form>
             <input type="submit" name="copy_submit_button" value="COPY ALL">
         </form>
         </ul> 

@@ -199,10 +199,10 @@ def edit_item():
 def delete_item():
     """delete an item from your item_detail page"""
 
-    user_id= session['current_user']
+    category_id = session['current_category']
     list_id = session['current_list']
     item_id = session['current_item']
-    
+    user_id= session['current_user']
     print session
 
     to_delete = Item.query.filter_by(item_id=item_id).first()
@@ -213,6 +213,7 @@ def delete_item():
     db.session.commit()
 
     flash ("Your item has been deleted")
+
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
 
@@ -221,76 +222,31 @@ def delete_item():
                             lists=lists)
 
 
-@app.route('/delete_items_from_list', methods=["POST"])
-def delete_items_from_list():
-    """delete item(s) from your list_detail page"""
-    #things in the session at this point
+@app.route('/copy_items', methods=["POST"])
+def copy_items():
+    """copy item(s) from your list_detail page"""
+
     user_id= session['current_user']
     list_id = session['current_list']   
-    category_id = session['current_category']
 
-    ids = request.form.getlist("delete_item_ids")
-    # print ids
-   
-    for i in ids:
-        i = int(i)
-        # print i
-        item_id = Item.query.filter_by(item_id=i).first()
-        # print item_id
-        db.session.delete(item_id)
-        db.session.commit()
+    copy_ids = request.form.getlist("copy_item_ids")
+    print copy_ids
+    
+    # to_copy = Item.query.filter_by(item_id=item_id).first()
+    # for i in ids:
+    #     i = int(i)
+    #     # print i
+    #     item_id = Item.query.filter_by(item_id=i).first()
+    #     # print item_id
+    #     db.session.delete(item_id)
+    #     db.session.commit()
 
-    # print ids
-    flash ("Your item has been deleted")
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
 
     return render_template("my_lists.html", 
                             user=user, 
                             lists=lists)
-
-
-@app.route('/copy_items_from_list', methods=["POST"])
-def copy_items_from_list():
-    """copy an item into a list"""
-# ('/item_detail/<int:item_id>')
-    user_id = session['current_user']
-    list_id = session['current_list']
-    item_id = session['current_item']
-    print session
-
-    to_copy = Item.query.filter_by(item_id=item_id).first()
-
-
-    # item = Item.query.filter_by(item_id=item_id).first()
-
-    # session['current_item'] = item_id
-    
-    # lists = List.query.filter_by(list_id=list_id).first()
-    # # session['current_user'] = user_id
-    # print session
-
-    # copy_category_name = request.form.get("category_name")
-    # copy_category = Category.query.filter_by(category_name=category_name).first()
-    # copy_category_id = category.category_id
-
-    # copy_item_name = request.form.get("item_name")
-    # copy_item_address = request.form.get("item_address")
-    # copy_item_comments = request.form.get("item_comments")
-    
-    # insert.copy_category_id = category_id
-    # update.copy_item_name = item_name
-    # update.copy_item_address = item_address
-    # update.copy_item_comments = item_comments
-
-    # db.session.commit()
-
-    # flash ("This item has been copied")
-#     user = User.query.filter_by(user_id=user_id).first()
-#     lists = List.query.filter_by(user_id=user_id).all()
-    return render_template("item_detail.html", 
-                                lists=lists, 
-                                item=item)
 
 
 @app.route('/my_lists')
