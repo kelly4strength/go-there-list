@@ -227,22 +227,30 @@ def copy_items():
     """copy item(s) from your list_detail page"""
 
     user_id= session['current_user']
-    list_id = session['current_list']   
+    # list_id = session['current_list']   
 
     copy_ids = request.form.getlist("copy_item_ids")
     print copy_ids
-    
-    # to_copy = Item.query.filter_by(item_id=item_id).first()
-    # for i in ids:
-    #     i = int(i)
-    #     # print i
-    #     item_id = Item.query.filter_by(item_id=i).first()
-    #     # print item_id
-    #     db.session.delete(item_id)
-    #     db.session.commit()
 
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
+    for i in copy_ids:
+        i = int(i)
+        print i
+        
+        old_item = Item.query.filter_by(item_id=i).first()
+        
+        new_item = Item(item_name=old_item.item_name,
+                    item_address=old_item.item_address,
+                    item_comments=old_item.item_comments,
+                    category_id=old_item.category_id)
+
+
+        # Issue is how to get this stuff out and 
+        # how to point where to put it
+        db.session.add(new_item)
+        db.session.commit()
+
+    # user = User.query.filter_by(user_id=user_id).first()
+    # lists = List.query.filter_by(user_id=user_id).all()
 
     return render_template("my_lists.html", 
                             user=user, 

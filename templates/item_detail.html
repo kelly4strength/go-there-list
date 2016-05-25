@@ -6,7 +6,7 @@
         {% if session.get('current_user') == lists.user_id %}
         <form action="/delete_item" method="POST">
  <!-- add a popup for are you sure? cannot be recovered... -->
-        <input type="submit" name="delete_submit_button" value="DELETE">    s
+        <input type="submit" name="delete_submit_button" value="DELETE">    
         </form>
                 <br>
         {% endif %}
