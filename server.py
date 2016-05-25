@@ -234,27 +234,30 @@ def copy_items():
 
     for i in copy_ids:
         i = int(i)
-        print i
-        
+        # print i
         old_item = Item.query.filter_by(item_id=i).first()
-        
+
         new_item = Item(item_name=old_item.item_name,
                     item_address=old_item.item_address,
                     item_comments=old_item.item_comments,
                     category_id=old_item.category_id)
+        # print new_item
+# Will it set an item ID and can I tell it to assign a list_id?
 
+    location_name = request.form.get("location_name")
+    list_name = request.form.get("list_name")
 
-        # Issue is how to get this stuff out and 
-        # how to point where to put it
-        db.session.add(new_item)
-        db.session.commit()
+    # category = Category.query.filter_by(category_name=category_name).first()
+    # category_id = category.category_id
 
-    # user = User.query.filter_by(user_id=user_id).first()
-    # lists = List.query.filter_by(user_id=user_id).all()
+    # item_name = request.form.get("item_name")
+    # item_address = request.form.get("item_address")
+    # item_comments = request.form.get("item_comments")
 
-    return render_template("my_lists.html", 
-                            user=user, 
-                            lists=lists)
+        # db.session.add(new_item)
+        # db.session.commit()
+
+    return render_template("copy_items.html")
 
 
 @app.route('/my_lists')
