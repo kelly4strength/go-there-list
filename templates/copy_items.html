@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Copy Item</h2>
+<div>        
+<form action="/copy_items" method="POST">
+Choose a location (city) <input type="text" name="location_name">
+        <br> 
+Choose a list name <input type="text" name="list_name">
+        <br>
+        <h3>Add item to your List</h3>      
+
+            next <input type="submit">    
+            <br>
+        </form>
+        </ul> 
+    </ul>
+</div>
+
+{% endblock %}
