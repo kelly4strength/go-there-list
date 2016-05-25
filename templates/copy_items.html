@@ -9,9 +9,21 @@ Choose a location (city) <input type="text" name="location_name">
 Choose a list name <input type="text" name="list_name">
         <br>
         <h3>Add item to your List</h3>      
+ 
 
-            next <input type="submit">    
-            <br>
+        <li>Item Name: <input type="text" name="item_name" value="{{ item_name }}"><br></li>
+        <li>Category:{{ category_id }} 
+        <select name="category_name">
+            <option value="restaurant">Restaurant</option>
+            <option value="bar">Bar</option>
+            <option value="museum">Museum</option>
+        </select>  </li>
+        <br>
+        <li>Address: <input type="text" name="item_address"value="{{ item_address }}"><br></li> 
+        <li>Comments:<input type="text" name="item_comments" value="{{ item_comments }}"><br></li> 
+        <br>
+        Save Item <input type="submit">    
+        <br>
         </form>
         </ul> 
     </ul>

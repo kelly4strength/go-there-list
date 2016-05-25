@@ -228,6 +228,7 @@ def copy_items():
 
     user_id= session['current_user']
     # list_id = session['current_list']   
+    flash("User is logged in")
 
     copy_ids = request.form.getlist("copy_item_ids")
     print copy_ids
@@ -241,23 +242,28 @@ def copy_items():
                     item_address=old_item.item_address,
                     item_comments=old_item.item_comments,
                     category_id=old_item.category_id)
-        # print new_item
-# Will it set an item ID and can I tell it to assign a list_id?
+        print new_item
 
     location_name = request.form.get("location_name")
     list_name = request.form.get("list_name")
+    
+    category_name = request.form.get("category_name")
+    category_name = Category.query.filter_by(category_name=category_name).first()
+    category_id = category.category_id
 
-    # category = Category.query.filter_by(category_name=category_name).first()
-    # category_id = category.category_id
 
-    # item_name = request.form.get("item_name")
-    # item_address = request.form.get("item_address")
-    # item_comments = request.form.get("item_comments")
+    item_name = request.form.get("item_name")
+    item_address = request.form.get("item_address")
+    item_comments = request.form.get("item_comments")
 
         # db.session.add(new_item)
         # db.session.commit()
 
-    return render_template("copy_items.html")
+    return render_template("copy_items.html",
+                            category_id=new_item.category_id,
+                            item_name=new_item.item_name,
+                            item_address=new_item.item_address,
+                            item_comments=new_item.item_comments)
 
 
 @app.route('/my_lists')
