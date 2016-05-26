@@ -82,6 +82,7 @@ def user_validation():
     password = request.form.get("password")
     
     user = User.query.filter_by(email=email).first()
+    # user_name = User.query.filter_by(user_name=user_name).first()
     
     if user == None:
         flash("Looks like you need to register")
@@ -90,7 +91,7 @@ def user_validation():
     elif user.password == password:
         session['current_user'] = user.user_id
         print session
-        flash("User " + email + " signed in")
+        flash("Hi  %s, you are now logged in!" % user.user_name)
         return render_template("homepage.html")
     else:
         flash("Password doesn't match. Try 1234")

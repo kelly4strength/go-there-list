@@ -2,18 +2,17 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Register for Go Lists</h1>
-
-<form action="/user_add" method="POST">
-
-    User Name <input type="text" name="zipcode">
-        <br>
-    Email <input type="text" name="email"> 
-        <br>
-    Password <input type="text" name="password">
-        <br>
-    <input type="submit">    
-        <br>
-</form>
-
+<div>
+	<h2>Register for Go Lists</h2>
+		<form action="/user_add" method="POST">
+		    User Name <input type="text" required name="user_name" maxlength="10">
+		        <br>
+		    Email <input type="text" required name="email"> 
+		        <br>
+		    Password <input type="text" required name="password">
+		        <br>
+		    <input type="submit">    
+		        <br>
+		</form>
+</div>
 {% endblock %}

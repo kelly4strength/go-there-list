@@ -1,17 +1,16 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Login to Go Lists</h1>
-
-
-<form action="/user_validation" method="POST">
-
-    Username (email) <input type="text" name="email"> 
-        <br>
-    Password <input type="text" name="password">
-        <br>
-    Login <input type="submit">    
-        <br>
-</form>
+<div>
+	<h2>Login to Go Lists</h2>
+		<form action="/user_validation" method="POST">
+		    Email <input type="text" required name="email"> 
+		        <br>
+		    Password <input type="text" required name="password">
+		        <br>
+		    Login <input type="submit">    
+		        <br>
+		</form>
+</div>
 
 {% endblock %}
