@@ -239,8 +239,7 @@ def copy_items():
                     item_address=old_item.item_address,
                     item_comments=old_item.item_comments,
                     category_id=old_item.category_id)
-        print new_item
-        # session['new_item'] = new_item
+        # print new_item
 
     return render_template("copy_items.html",
                             category_id=new_item.category_id,
@@ -267,8 +266,8 @@ def copy_items_to_list():
         location = Location.query.filter_by(location_name=location_name).first()
 
         #telling the session to please remember this now
-        session['current_location'] = location.location_id
-        print session
+    session['current_location'] = location.location_id
+    print session
 
     #session carried over - remember that thing I asked you to remember? Here it is.
     location_id = session['current_location']

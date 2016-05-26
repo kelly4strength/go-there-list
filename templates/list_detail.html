@@ -13,19 +13,19 @@
             <li>Location: {{ lists.location.location_name }}</li>
         <ul>
             <br>
+             {% for item in items %}
              <form action="/copy_items" method="POST">
-                {% for item in items %}
                     <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
                      <!-- Do I need to show the category? or is that just for the backend? -->
                     <li>Category: {{ item.category.category_name }}</li> 
                     <li>Address: {{ item.item_address }}</li> 
                     <li>Comments: {{ item.item_comments }}</li> 
                         
-                        Copy item: {{ item.item_id }} <input type="checkbox" name="copy_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
-                        <br>
-                        <br>
-                {% endfor %}
-            <input type="submit" name="copy_submit_button" value="COPY ALL">
+            Copy item: {{ item.item_id }} <input type="checkbox" name="copy_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">
+            <input type="submit" name="copy_submit_button" value="COPY">
+            <br>
+            <br>
+            {% endfor %}
         </form>
         </ul> 
     </ul>
