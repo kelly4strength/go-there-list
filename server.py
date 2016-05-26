@@ -199,7 +199,6 @@ def edit_item():
 def delete_item():
     """delete an item from your item_detail page"""
 
-    category_id = session['current_category']
     list_id = session['current_list']
     item_id = session['current_item']
     user_id= session['current_user']
@@ -224,11 +223,9 @@ def delete_item():
 
 @app.route('/copy_items', methods=["POST"])
 def copy_items():
-    """copy item(s) from your list_detail page"""
+    """copy item(s) from list_detail page"""
 
-    user_id= session['current_user']
-    # list_id = session['current_list']   
-    flash("User is logged in")
+    user_id = session['current_user']
 
     copy_ids = request.form.getlist("copy_item_ids")
     print copy_ids
@@ -243,27 +240,84 @@ def copy_items():
                     item_comments=old_item.item_comments,
                     category_id=old_item.category_id)
         print new_item
-
-    location_name = request.form.get("location_name")
-    list_name = request.form.get("list_name")
-    
-    category_name = request.form.get("category_name")
-    category_name = Category.query.filter_by(category_name=category_name).first()
-    category_id = category.category_id
-
-
-    item_name = request.form.get("item_name")
-    item_address = request.form.get("item_address")
-    item_comments = request.form.get("item_comments")
-
-        # db.session.add(new_item)
-        # db.session.commit()
+        # session['new_item'] = new_item
 
     return render_template("copy_items.html",
                             category_id=new_item.category_id,
                             item_name=new_item.item_name,
                             item_address=new_item.item_address,
                             item_comments=new_item.item_comments)
+
+
+@app.route('/copy_items_to_list', methods=["POST"])
+def copy_items_to_list():
+    """save copied item(s) to list"""
+
+    user_id = session['current_user']
+
+    location_name = request.form.get("location_name")
+
+    location = Location.query.filter_by(location_name=location_name).first()
+# 
+    if location == None:
+        new_location = Location(location_name=location_name)
+        db.session.add(new_location)
+        db.session.commit()
+
+        location = Location.query.filter_by(location_name=location_name).first()
+
+        #telling the session to please remember this now
+        session['current_location'] = location.location_id
+        print session
+
+    #session carried over - remember that thing I asked you to remember? Here it is.
+    location_id = session['current_location']
+
+    #query to set the variable list_name in order to pass it into the new_list object
+    list_name = request.form.get("list_name")
+
+    new_list = List(user_id=user_id,
+                    location_id=location_id,
+                    list_name=list_name)
+
+    db.session.add(new_list)
+    db.session.commit()
+
+    lists = List.query.filter_by(list_name=list_name).first()
+# 
+
+    session['current_list'] = new_list.list_id
+    
+    user_id = session['current_user']
+    location_id = session['current_location']
+    list_id = session['current_list']
+    print session
+        
+    category_name = request.form.get("category_name")
+    category = Category.query.filter_by(category_name=category_name).first()
+    category_id = category.category_id
+
+    item_name = request.form.get("item_name")
+    item_address = request.form.get("item_address")
+    item_comments = request.form.get("item_comments")
+
+    final_item = Item(list_id=list_id,
+                    category_id=category_id,
+                    item_name=item_name,
+                    item_address=item_address,
+                    item_comments=item_comments)
+
+
+    db.session.add(final_item)
+    db.session.commit()
+
+
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
+
+    return render_template("my_lists.html", 
+                        user=user, 
+                        lists=lists)
 
 
 @app.route('/my_lists')
