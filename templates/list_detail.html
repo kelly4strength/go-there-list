@@ -7,26 +7,27 @@
         {% if session.get('current_user') == lists.user_id %}
         <button><a href="/add_item_to_existing_list" class="button" id="add_item">Add an item</a></button>
         {% endif %}
-
+    <br>
+    <br>
+    List Name: {{ lists.list_name }}
+    <br>
+    Location: {{ lists.location.location_name }}
+    <br>
         <ul>
-            <li>List Name: {{ lists.list_name }}</li>
-            <li>Location: {{ lists.location.location_name }}</li>
-        <ul>
-            <br>
-             {% for item in items %}
-             <form action="/copy_items" method="POST">
-                    <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
-                    <li>Category: {{ item.category.category_name }}</li> 
-                    <li>Address: {{ item.item_address }}</li> 
-                    <li>Comments: {{ item.item_comments }}</li> 
-            Copy<input type="submit" name="copy_item_ids" value="{{ item.item_id }}">
-            <!-- make sure to fix this submit button, add back checkboxes when I can add multiple items -->
-            <br>
-            <br>
+            {% for item in items %}
+            <form action="/copy_items" method="POST">
+                <li>Item Name: <a href="/item_detail/{{ item.item_id }}">{{ item.item_name }}</a></li>
+                <li>Category: {{ item.category.category_name }}</li> 
+                <li>Address: {{ item.item_address }}</li> 
+                <li>Comments: {{ item.item_comments }}</li> 
+                Copy <input type="submit" name="copy_item_ids" value="{{ item.item_id }}">
+                <!-- fix this submit button, add back checkboxes when I can add multiple items -->
+                <br>
+                <br>
             {% endfor %}
-        </form>
-        </ul> 
-    </ul>
-</div>
+            </form> 
+        </ul>
+    </div>
+
 {% endblock %}
 

@@ -70,7 +70,9 @@ def user_add():
         db.session.add(new_user)
         db.session.commit()
 
-        flash("User " + email + " is now registered")
+        user = User.query.filter_by(email=email).first()
+
+        flash("Hi %s, You are now registered! Please log in." % user.user_name)
 
         return render_template("homepage.html")
    
@@ -94,17 +96,17 @@ def user_validation():
         flash("Hi  %s, you are now logged in!" % user.user_name)
         return render_template("homepage.html")
     else:
-        flash("Password doesn't match. Try 1234")
+        flash("Sorry, your password doesn't match. Try 1234")
         return render_template("login.html")
 
         
 @app.route('/logout')
 def log_user_out_of_session():
     """remove user from session"""
-    
+    # should I add a condition here that you can't logout if you aren't logged in?
     session.clear()
     print "session cleared"
-    flash("you have logged out")
+    flash("You have logged out. See you next time.")
     
     return render_template("homepage.html")
 
@@ -115,8 +117,6 @@ def user_page(user_id):
 
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
-
-    print session
 
     return render_template("user_detail.html", 
                             user=user, 
@@ -131,11 +131,28 @@ def list_details(list_id):
     items = Item.query.filter_by(list_id=list_id).all()
 
     session['current_list'] = list_id
-    print session
 
     return render_template("list_detail.html", 
                             lists=lists, 
                             items=items)
+
+
+@app.route('/my_lists')
+def my_lists():
+    """Show all lists created by user""" 
+
+    if session.get('current_user') == None:
+        flash ("please login first")
+        return render_template("login.html") 
+        
+    user_id = session['current_user']
+
+    user = User.query.filter_by(user_id=user_id).first()
+    lists = List.query.filter_by(user_id=user_id).all()
+
+    return render_template("my_lists.html", 
+                            user=user, 
+                            lists=lists)
 
 
 @app.route('/item_detail/<int:item_id>')
@@ -145,15 +162,11 @@ def item_details(item_id):
     #things in the session at this point
     user_id = session['current_user']
     list_id = session['current_list']
-    # category_id = session['current_category']
-
-    item = Item.query.filter_by(item_id=item_id).first()
 
     session['current_item'] = item_id
-    
+
     lists = List.query.filter_by(list_id=list_id).first()
-    # session['current_user'] = user_id
-    print session
+    item = Item.query.filter_by(item_id=item_id).first()
     
     return render_template("item_detail.html", 
                             lists=lists, 
@@ -167,8 +180,6 @@ def edit_item():
     user_id = session['current_user']
     list_id = session['current_list']
     item_id = session['current_item']
-    
-    print session
 
     update = Item.query.filter_by(item_id=item_id).first()
 
@@ -188,12 +199,13 @@ def edit_item():
     db.session.commit()
 
     flash ("Your item has been updated")
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
-    
-    return render_template("my_lists.html", 
-                            user=user, 
-                            lists=lists)
+
+    lists = List.query.filter_by(list_id=list_id).first()
+    items = Item.query.filter_by(list_id=list_id).all()
+
+    return render_template("list_detail.html", 
+                            lists=lists, 
+                            items=items)
 
 
 @app.route('/delete_item', methods=["POST"])
@@ -203,23 +215,22 @@ def delete_item():
     list_id = session['current_list']
     item_id = session['current_item']
     user_id= session['current_user']
-    print session
 
     to_delete = Item.query.filter_by(item_id=item_id).first()
-    print to_delete
-    print type(to_delete)
+    # print to_delete
+    # print type(to_delete)
 
     db.session.delete(to_delete)
     db.session.commit()
 
-    flash ("Your item has been deleted")
+    flash ("%s has been deleted" % to_delete.item_name)
 
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
+    lists = List.query.filter_by(list_id=list_id).first()
+    items = Item.query.filter_by(list_id=list_id).all()
 
-    return render_template("my_lists.html", 
-                            user=user, 
-                            lists=lists)
+    return render_template("list_detail.html", 
+                            lists=lists, 
+                            items=items)
 
 
 @app.route('/copy_items', methods=["POST"])
@@ -229,21 +240,20 @@ def copy_items():
     user_id = session['current_user']
 
     copy_ids = request.form.getlist("copy_item_ids")
-    print copy_ids
+    # print copy_ids
 
     for i in copy_ids:
         i = int(i)
-        # print i
         old_item = Item.query.filter_by(item_id=i).first()
 
         new_item = Item(item_name=old_item.item_name,
                     item_address=old_item.item_address,
                     item_comments=old_item.item_comments,
                     category_id=old_item.category_id)
-        # print new_item
+    category = Category.query.filter_by(category_id=old_item.category_id).first()
 
     return render_template("copy_items.html",
-                            category_id=new_item.category_id,
+                            category=category,
                             item_name=new_item.item_name,
                             item_address=new_item.item_address,
                             item_comments=new_item.item_comments)
@@ -258,7 +268,7 @@ def copy_items_to_list():
     location_name = request.form.get("location_name")
 
     location = Location.query.filter_by(location_name=location_name).first()
-# 
+
     if location == None:
         new_location = Location(location_name=location_name)
         db.session.add(new_location)
@@ -266,14 +276,10 @@ def copy_items_to_list():
 
         location = Location.query.filter_by(location_name=location_name).first()
 
-        #telling the session to please remember this now
     session['current_location'] = location.location_id
-    print session
 
-    #session carried over - remember that thing I asked you to remember? Here it is.
     location_id = session['current_location']
 
-    #query to set the variable list_name in order to pass it into the new_list object
     list_name = request.form.get("list_name")
 
     new_list = List(user_id=user_id,
@@ -284,14 +290,13 @@ def copy_items_to_list():
     db.session.commit()
 
     lists = List.query.filter_by(list_name=list_name).first()
-# 
 
     session['current_list'] = new_list.list_id
     
     user_id = session['current_user']
     location_id = session['current_location']
     list_id = session['current_list']
-    print session
+    # print session
         
     category_name = request.form.get("category_name")
     category = Category.query.filter_by(category_name=category_name).first()
@@ -307,39 +312,17 @@ def copy_items_to_list():
                     item_address=item_address,
                     item_comments=item_comments)
 
-
     db.session.add(final_item)
     db.session.commit()
 
+    flash ("%s has been copied" % item_name )
 
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
+    lists = List.query.filter_by(list_id=list_id).first()
+    items = Item.query.filter_by(list_id=list_id).all()
 
-    return render_template("my_lists.html", 
-                        user=user, 
-                        lists=lists)
-
-
-@app.route('/my_lists')
-def my_lists():
-    """Show all lists created by user""" 
-
-    if session.get('current_user') == None:
-        flash ("please login first")
-        return render_template("login.html") 
-
-    flash("User is logged in")
-    user_id = session['current_user']
-    print session
-
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
-
-    # items = Items.query.filter_by(list_id=list_id).all()
-    #decided I don't need list items here as it has links to list pages
-    return render_template("my_lists.html", 
-                            user=user, 
-                            lists=lists)
+    return render_template("list_detail.html", 
+                            lists=lists, 
+                            items=items)
 
 
 @app.route('/create_list')
@@ -350,9 +333,7 @@ def create_list():
         flash ("please login before creating a list")
         return render_template("login.html") 
 
-    flash("User is logged in")
     user_id = session['current_user']
-    print session
 
     return render_template("create_list_form.html")
 
@@ -445,14 +426,19 @@ def new_item():
 
     YN = request.form.get("YN")
 
-# browser says: http://localhost:5000/new_item for either option 
+    # browser says: http://localhost:5000/new_item for either option 
     if YN == "yes":
          return render_template("add_new_items.html", 
                                 list_id=list_id)
-    
-    return render_template("my_lists.html",
-                                user=user, 
-                                lists=lists)
+
+    lists = List.query.filter_by(list_id=list_id).first()
+    items = Item.query.filter_by(list_id=list_id).all()
+
+    session['current_list'] = list_id
+
+    return render_template("list_detail.html", 
+                            lists=lists, 
+                            items=items)
 
 
 @app.route('/add_another_item', methods=["POST"])

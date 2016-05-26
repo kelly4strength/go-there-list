@@ -1,16 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Users</h2>
-    <div>
+<h2>Users</h2>
+  <div>
+    Click on a User to see their lists
     <ul>
-      {% for user in users %}
-          <li>
-              <a href="/users/{{ user.user_id }}">
-                {{ user.user_name }} ({{ user.user_id }})
-              </a>
-          </li>
+    {% for user in users %}
+      <li>
+        <a href="/users/{{ user.user_id }}">{{ user.user_name }}</a>
+      </li>
       {% endfor %}
     </ul>
-</div>
+  </div>
 {% endblock %}

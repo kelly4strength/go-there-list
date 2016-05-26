@@ -1,24 +1,19 @@
 {% extends 'base.html' %}
 {% block content %}
 
-        <h2>User Info</h2>
+<h2>User Info</h2>
     <div>
-        <!-- User Name:  -->{{ user.user_name }}'s Lists
+    {{ user.user_name }}'s Lists
         <ul> 
-            <!-- <li>User email: {{ user.email }}</li>   -->
-        {% for list in lists %}
-
+            {% for list in lists %}
             <li>City: {{list.location.location_name}}
-                <ul><li>List Name: <a href="/lists/{{ list.list_id }}">
-                {{ list.list_name}}</a></li></ul>
+                <ul>
+                    <li>List Name: <a href="/lists/{{ list.list_id }}">
+                    {{ list.list_name}}</a>
+                    </li>
+                </ul>
             </li>
-      
-        {% endfor %}
+            {% endfor %}
         </ul> 
-
-
-<!-- Want to show the Users lists here, ordered by City, City ordered alphabetically -->
-
     </div>
-
 {% endblock %}

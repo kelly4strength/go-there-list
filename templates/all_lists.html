@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block content %}
 
-    <h2>Lists</h2>
-    <div>
+<h2>Lists</h2>
+  <div>
     <ul>
       {% for list in lists %}
-          <li>
-              <a href="/lists/{{ list.list_id }}">
-                {{ list.list_name }}
-              </a>
-          </li>
+        <li>
+          <a href="/lists/{{ list.list_id }}">
+            {{ list.list_name }}
+          </a>
+        </li>
       {% endfor %}
     </ul>
   </div>

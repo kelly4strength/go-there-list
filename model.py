@@ -37,9 +37,6 @@ class List(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     location_id = db.Column(db.Integer, db.ForeignKey('locations.location_id'))
     
-    #was testing this to get data into the create list form
-    # location_name = db.Column(db.Integer, db.ForeignKey('locations.location_name'))
-    
     # Define relationships
     user = db.relationship('User')
     location = db.relationship('Location')
@@ -66,6 +63,7 @@ class Location(db.Model):
         """Provide helpful representation when printed."""
 
         return "<Location location_id=%s location_name=%s>" % (self.location_id, self.location_name)
+
 
 class Category(db.Model):
     """Category of list item. This is to differentiate the types of Items in a list."""
@@ -121,5 +119,4 @@ if __name__ == "__main__":
     connect_to_db(app)
     print "Connected to DB."
 
-    # uncomment as needed after dropdb/createdb to regenerate sample data.
     db.create_all()
