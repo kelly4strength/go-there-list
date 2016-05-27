@@ -5,8 +5,9 @@
 {% block content %}
 
 <h2>Add an item to your List</h2>
+                <!-- put in list name -->
     <div>
-        List ID: {{ list_id }}
+        <p hidden List ID: {{ list_id }}></p>
         <form action="/add_another_item" method="POST">
         Add something to your list:
             {{ itemschoices() }}

@@ -58,7 +58,7 @@ def register():
 @app.route('/user_add', methods=["POST"])
 def user_add():
     """add new users to dbase"""
-    #make sure email is unique
+    #add code to make sure email/username chosen are unique
 
     email = request.form.get("email")
     password = request.form.get("password")
@@ -83,8 +83,8 @@ def user_validation():
     password = request.form.get("password")
     
     user = User.query.filter_by(email=email).first()
-    #add try and except for cases where the emails are multiple
-    #and change to .one
+    #add try and except for cases where the emails are duplicates
+    #and change to .one rather than .first
 
     if user == None:
         flash("Looks like you need to register")
@@ -105,7 +105,7 @@ def log_user_out_of_session():
     """remove user from session"""
 
     session.clear()
-    print "session cleared"
+    # print "session cleared"
     flash("You have logged out. See you next time.")
     
     return render_template("homepage.html")
@@ -114,27 +114,21 @@ def log_user_out_of_session():
 @app.route('/users/<int:user_id>')
 def user_page(user_id):
     """Take user to a page that displays user info"""
-    # add .one
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
 
     return render_template("user_detail.html", 
-                            user=user, 
-                            lists=lists)
+                            user=User.query.filter_by(user_id=user_id).one(), 
+                            lists=List.query.filter_by(user_id=user_id).all())
 
 
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
     # add .one
-    lists = List.query.filter_by(list_id=list_id).first()
-    items = Item.query.filter_by(list_id=list_id).all()
-
     session['current_list'] = list_id
 
     return render_template("list_detail.html", 
-                            lists=lists, 
-                            items=items)
+                            lists=List.query.filter_by(list_id=list_id).one(), 
+                            items=Item.query.filter_by(list_id=list_id).all())
 
 
 @app.route('/my_lists')
@@ -147,30 +141,25 @@ def my_lists():
         
     user_id = session['current_user']
 
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
-
+    # if you add a number to the URL w/out a user attached you get 
+    # NoResultFound: No row was found for one() -need to add route for errors
     return render_template("my_lists.html", 
-                            user=user, 
-                            lists=lists)
+                            user=User.query.filter_by(user_id=user_id).one(), 
+                            lists=List.query.filter_by(user_id=user_id).all())
 
 
 @app.route('/item_detail/<int:item_id>')
 def item_details(item_id):
     """Take user to a page that displays the item in their list"""
 
-    #things in the session at this point
     user_id = session['current_user']
     list_id = session['current_list']
 
     session['current_item'] = item_id
 
-    lists = List.query.filter_by(list_id=list_id).first()
-    item = Item.query.filter_by(item_id=item_id).first()
-    
     return render_template("item_detail.html", 
-                            lists=lists, 
-                            item=item)
+                            lists=List.query.filter_by(list_id=list_id).first(), 
+                            item=Item.query.filter_by(item_id=item_id).first())
 
 
 @app.route('/edit_item_detail', methods=["POST"])
@@ -182,32 +171,22 @@ def edit_item():
     item_id = session['current_item']
 
     update = Item.query.filter_by(item_id=item_id).first()
-
+                                                        # add .one()
     category_name = request.form.get("category_name")
     category = Category.query.filter_by(category_name=category_name).first()
-    category_id = category.category_id
-
-    item_name = request.form.get("item_name")
-    item_address = request.form.get("item_address")
-    item_comments = request.form.get("item_comments")
     
-    update.category_id = category_id
-    update.item_name = item_name
-    update.item_address = item_address
-    update.item_comments = item_comments
-
-    # reminder to consolidate update.item_comments = request.form.get("item_comments")
+    update.category_id = category_id = category.category_id
+    update.item_name = request.form.get("item_name")
+    update.item_address = request.form.get("item_address")
+    update.item_comments = request.form.get("item_comments")
     
     db.session.commit()
 
     flash ("Your item has been updated")
 
-    lists = List.query.filter_by(list_id=list_id).first()
-    items = Item.query.filter_by(list_id=list_id).all()
-
     return render_template("list_detail.html", 
-                            lists=lists, 
-                            items=items)
+                            lists=List.query.filter_by(list_id=list_id).first(), 
+                            items=Item.query.filter_by(list_id=list_id).all())
 
 
 @app.route('/delete_item', methods=["POST"])
@@ -215,26 +194,23 @@ def delete_item():
     """delete an item from your item_detail page"""
 
     list_id = session.get('current_list')
-    #use .get - safer, so you avoid errors and just None
-    #set up way to deal with None
-    item_id = session['current_item']
-    user_id= session['current_user']
+    item_id = session.get('current_item')
+    user_id= session.get('current_user')
+                             # set up way to deal with None
+        # use .get - safer, so you avoid errors 
+        # If there is nothing in the session, just returns None 
+        # from user_id= session['current_user']
 
     to_delete = Item.query.filter_by(item_id=item_id).first()
-    # print to_delete
-    # print type(to_delete)
-
+                            # .one()
     db.session.delete(to_delete)
     db.session.commit()
 
     flash ("%s has been deleted" % to_delete.item_name)
 
-    lists = List.query.filter_by(list_id=list_id).first()
-    items = Item.query.filter_by(list_id=list_id).all()
-
     return render_template("list_detail.html", 
-                            lists=lists, 
-                            items=items)
+                            lists=List.query.filter_by(list_id=list_id).first(), 
+                            items=Item.query.filter_by(list_id=list_id).all())
 
 
 @app.route('/copy_items', methods=["POST"])
@@ -294,7 +270,7 @@ def copy_items_to_list():
     # user_id = session['current_user']
     # location_id = session['current_location']
     list_id = session['current_list'] = new_list.list_id
-    # print session
+   
         
     category_name = request.form.get("category_name")
     category = Category.query.filter_by(category_name=category_name).first()
@@ -327,12 +303,9 @@ def copy_items_to_list():
 
     flash ("%s has been copied" % item_name )
 
-    lists = List.query.filter_by(list_id=list_id).first()
-    items = Item.query.filter_by(list_id=list_id).all()
-
     return render_template("list_detail.html", 
-                            lists=lists, 
-                            items=items)
+                            lists=List.query.filter_by(list_id=list_id).first(), 
+                            items=Item.query.filter_by(list_id=list_id).all())
 
 
 @app.route('/create_list')
@@ -373,7 +346,7 @@ def start_new_list():
     location_id = session['current_location']
 
     #query to set the variable list_name in order to pass it into the new_list object
-    list_name = request.form.get("list_name")
+    list_name = request.form.get("list_name") 
 
     new_list = List(user_id=user_id,
                     location_id=location_id,
@@ -381,31 +354,24 @@ def start_new_list():
 
     db.session.add(new_list)
     db.session.commit()
-
-    lists = List.query.filter_by(list_name=list_name).first()
+                                                # .one()
     
-    session['current_list'] = lists.list_id
+    lists = List.query.filter_by(list_name=list_name).first()
     
     user_id = session['current_user']
     location_id = session['current_location']
-    list_id = session['current_list']
+    list_id = session['current_list'] = lists.list_id
 
-    category_name = request.form.get("category_name")
+    category_name = request.form.get("category_name")      # .one()
     category = Category.query.filter_by(category_name=category_name).first()
     
-    #there's a better way to do this right?
-    session['current_category'] = category.category_id
-    category_id = session['current_category']
-    
-    item_name = request.form.get("item_name")
-    item_address = request.form.get("item_address")
-    item_comments = request.form.get("item_comments")
+    category_id = session['current_category'] = category.category_id
 
     new_item = Item(list_id=list_id,
                     category_id=category_id,
-                    item_name=item_name,
-                    item_address=item_address,
-                    item_comments=item_comments)
+                    item_name=request.form.get("item_name"),
+                    item_address=request.form.get("item_address"),
+                    item_comments=request.form.get("item_comments"))
 
     db.session.add(new_item)
     db.session.commit()
@@ -420,28 +386,17 @@ def new_item():
     """Form to ask user if they want to add another item"""
     
     user_id = session['current_user']
-    # location_id = session['current_location'] (needed this for previous route, may reinstate)
     list_id = session['current_list']
-
-    print session
-    user = User.query.filter_by(user_id=user_id).first()
-    lists = List.query.filter_by(user_id=user_id).all()
 
     YN = request.form.get("YN")
 
-    # browser says: http://localhost:5000/new_item for either option 
     if YN == "yes":
          return render_template("add_new_items.html", 
                                 list_id=list_id)
 
-    lists = List.query.filter_by(list_id=list_id).first()
-    items = Item.query.filter_by(list_id=list_id).all()
-
-    session['current_list'] = list_id
-
     return render_template("list_detail.html", 
-                            lists=lists, 
-                            items=items)
+                            lists=List.query.filter_by(list_id=list_id).first(), 
+                            items=Item.query.filter_by(list_id=list_id).all())
 
 
 @app.route('/add_another_item', methods=["POST"])
