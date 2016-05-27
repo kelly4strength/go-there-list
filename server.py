@@ -58,6 +58,7 @@ def register():
 @app.route('/user_add', methods=["POST"])
 def user_add():
     """add new users to dbase"""
+    #make sure email is unique
 
     email = request.form.get("email")
     password = request.form.get("password")
@@ -70,9 +71,7 @@ def user_add():
         db.session.add(new_user)
         db.session.commit()
 
-        user = User.query.filter_by(email=email).first()
-
-        flash("Hi %s, You are now registered! Please log in." % user.user_name)
+        flash("Hi %s, You are now registered! Please log in." % user_name)
 
         return render_template("homepage.html")
    
@@ -84,17 +83,18 @@ def user_validation():
     password = request.form.get("password")
     
     user = User.query.filter_by(email=email).first()
-    # user_name = User.query.filter_by(user_name=user_name).first()
-    
+    #add try and except for cases where the emails are multiple
+    #and change to .one
+
     if user == None:
         flash("Looks like you need to register")
         return render_template("register.html")
     
     elif user.password == password:
         session['current_user'] = user.user_id
-        print session
         flash("Hi  %s, you are now logged in!" % user.user_name)
         return render_template("homepage.html")
+
     else:
         flash("Sorry, your password doesn't match. Try 1234")
         return render_template("login.html")
@@ -103,7 +103,7 @@ def user_validation():
 @app.route('/logout')
 def log_user_out_of_session():
     """remove user from session"""
-    # should I add a condition here that you can't logout if you aren't logged in?
+
     session.clear()
     print "session cleared"
     flash("You have logged out. See you next time.")
@@ -114,7 +114,7 @@ def log_user_out_of_session():
 @app.route('/users/<int:user_id>')
 def user_page(user_id):
     """Take user to a page that displays user info"""
-
+    # add .one
     user = User.query.filter_by(user_id=user_id).first()
     lists = List.query.filter_by(user_id=user_id).all()
 
@@ -126,7 +126,7 @@ def user_page(user_id):
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
-
+    # add .one
     lists = List.query.filter_by(list_id=list_id).first()
     items = Item.query.filter_by(list_id=list_id).all()
 
@@ -196,6 +196,8 @@ def edit_item():
     update.item_address = item_address
     update.item_comments = item_comments
 
+    # reminder to consolidate update.item_comments = request.form.get("item_comments")
+    
     db.session.commit()
 
     flash ("Your item has been updated")
@@ -212,7 +214,9 @@ def edit_item():
 def delete_item():
     """delete an item from your item_detail page"""
 
-    list_id = session['current_list']
+    list_id = session.get('current_list')
+    #use .get - safer, so you avoid errors and just None
+    #set up way to deal with None
     item_id = session['current_item']
     user_id= session['current_user']
 
@@ -250,6 +254,7 @@ def copy_items():
                     item_address=old_item.item_address,
                     item_comments=old_item.item_comments,
                     category_id=old_item.category_id)
+
     category = Category.query.filter_by(category_id=old_item.category_id).first()
 
     return render_template("copy_items.html",
@@ -265,6 +270,7 @@ def copy_items_to_list():
 
     user_id = session['current_user']
 
+    list_name = request.form.get("list_name")
     location_name = request.form.get("location_name")
 
     location = Location.query.filter_by(location_name=location_name).first()
@@ -276,11 +282,7 @@ def copy_items_to_list():
 
         location = Location.query.filter_by(location_name=location_name).first()
 
-    session['current_location'] = location.location_id
-
-    location_id = session['current_location']
-
-    list_name = request.form.get("list_name")
+    location_id = session['current_location'] = location.location_id
 
     new_list = List(user_id=user_id,
                     location_id=location_id,
@@ -288,14 +290,10 @@ def copy_items_to_list():
 
     db.session.add(new_list)
     db.session.commit()
-
-    lists = List.query.filter_by(list_name=list_name).first()
-
-    session['current_list'] = new_list.list_id
     
-    user_id = session['current_user']
-    location_id = session['current_location']
-    list_id = session['current_list']
+    # user_id = session['current_user']
+    # location_id = session['current_location']
+    list_id = session['current_list'] = new_list.list_id
     # print session
         
     category_name = request.form.get("category_name")
@@ -305,6 +303,18 @@ def copy_items_to_list():
     item_name = request.form.get("item_name")
     item_address = request.form.get("item_address")
     item_comments = request.form.get("item_comments")
+
+    # item_name, item_address, item_contents = get_item_choices(request)
+
+    # def get_item_choices(request):
+
+    #    item_name = request.form.get("item_name")
+    #     item_address = request.form.get("item_address")
+    #     item_comments = request.form.get("item_comments")
+
+    #     return (item_name, item_address, item_contents)
+
+
 
     final_item = Item(list_id=list_id,
                     category_id=category_id,
@@ -342,7 +352,6 @@ def create_list():
 def start_new_list():
     """Add first item to newly created list"""
 
-    flash("User is logged in")
     #session carried over - remember that thing I asked you to remember? Here it is.
     user_id = session['current_user']
 
@@ -357,11 +366,10 @@ def start_new_list():
 
         location = Location.query.filter_by(location_name=location_name).first()
 
-        #telling the session to please remember this now
+        #telling session to please remember this now
         session['current_location'] = location.location_id
         print session
 
-    #session carried over - remember that thing I asked you to remember? Here it is.
     location_id = session['current_location']
 
     #query to set the variable list_name in order to pass it into the new_list object
@@ -376,21 +384,18 @@ def start_new_list():
 
     lists = List.query.filter_by(list_name=list_name).first()
     
-    #telling the session to please remember this now
     session['current_list'] = lists.list_id
     
     user_id = session['current_user']
     location_id = session['current_location']
     list_id = session['current_list']
-    print session
 
     category_name = request.form.get("category_name")
-    # query categories to get the id 
     category = Category.query.filter_by(category_name=category_name).first()
     
+    #there's a better way to do this right?
     session['current_category'] = category.category_id
     category_id = session['current_category']
-    print session
     
     item_name = request.form.get("item_name")
     item_address = request.form.get("item_address")
@@ -404,8 +409,6 @@ def start_new_list():
 
     db.session.add(new_item)
     db.session.commit()
-
-    flash ("Your item has been added")
 
     return render_template("new_item.html",
                             list_id=list_id,

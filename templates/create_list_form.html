@@ -1,29 +1,18 @@
 {% extends 'base.html' %}
+
+{% from 'macros.html' import itemschoices %}
+
 {% block content %}
 
 <h2>Create a new List</h2>
-<div>
-<form action="/create_list_form" method="POST">
-Choose a location (city) <input type="text" name="location_name">
-<br> 
-Choose a list name <input type="text" name="list_name">
-<br>
-<h3>Add an item to your List</h3>      
-Category:
-    <select name="category_name">
-        <option value="restaurant">Restaurant</option>
-        <option value="bar">Bar</option>
-        <option value="museum">Museum</option>
-    </select>  
-    <br>
-Name <input type="text" name="item_name">
-    <br>       
-Address <input type="text" name="item_address">
-    <br>       
-Comments <input type="text" name="item_comments">
-    <br>
-Save Item <input type="submit">    
-    <br>
-</form>
-</div>
+    <div>
+        <form action="/create_list_form" method="POST">
+        Choose a location (city) <input type="text" name="location_name">
+        <br> 
+        Choose a list name <input type="text" name="list_name">
+        <br>
+        Add an item to your List      
+            {{ itemschoices() }}
+        </form>
+    </div>
 {% endblock %}

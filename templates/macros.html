@@ -1,0 +1,20 @@
+{% macro itemschoices() %}
+Category:
+	<select name="category_name">
+		<option value="restaurant">Restaurant</option>
+		<option value="bar">Bar</option>
+		<option value="museum">Museum</option>
+	</select>  
+    <br>
+    <br>
+Name <input type="text" name="item_name">
+    <br>
+    <br>       
+Address <input type="text" name="item_address">
+    <br>
+    <br>       
+Comments <input type="text" name="item_comments">
+    <br>
+    <br>
+Save Item <input type="submit">    
+{% endmacro %}
