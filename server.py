@@ -29,16 +29,14 @@ def index():
 def user_list():
     """Show all users."""
 
-    users = User.query.all()
-    return render_template("user_list.html", users=users)
+    return render_template("user_list.html", users=User.query.all())
 
 
 @app.route("/lists")
 def all_lists():
     """Show all user lists."""
 
-    lists = List.query.order_by('list_name').all()
-    return render_template("alL_lists.html", lists=lists)
+    return render_template("alL_lists.html", lists=List.query.order_by('list_name').all())
 
 
 @app.route('/login')
@@ -123,7 +121,7 @@ def user_page(user_id):
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
     """Take user to a page that displays a list"""
-    # add .one
+    
     session['current_list'] = list_id
 
     return render_template("list_detail.html", 
@@ -151,15 +149,31 @@ def my_lists():
 @app.route('/item_detail/<int:item_id>')
 def item_details(item_id):
     """Take user to a page that displays the item in their list"""
+    
+    # if session.get('current_user') == None:
+    #     flash ("please login first")
+    #     return render_template("login.html") 
 
-    user_id = session['current_user']
-    list_id = session['current_list']
+    # user_id = session['current_user']
+    # list_id = session['current_list']
 
-    session['current_item'] = item_id
+    # session['current_item'] = item_id
 
+    # Which is better? 
+    try:
+        user_id = session['current_user']
+        list_id = session['current_list']
+
+        session['current_item'] = item_id
+    
+    except:
+        session['current_user'] = None
+        flash('Please log in to see item details. Thanks :)')
+        return render_template("login.html")
+ 
     return render_template("item_detail.html", 
-                            lists=List.query.filter_by(list_id=list_id).first(), 
-                            item=Item.query.filter_by(item_id=item_id).first())
+                        lists=List.query.filter_by(list_id=list_id).first(), 
+                        item=Item.query.filter_by(item_id=item_id).first())
 
 
 @app.route('/edit_item_detail', methods=["POST"])
@@ -217,27 +231,34 @@ def delete_item():
 def copy_items():
     """copy item(s) from list_detail page"""
 
-    user_id = session['current_user']
+    try:
+        user_id = session['current_user']
 
-    copy_ids = request.form.getlist("copy_item_ids")
-    # print copy_ids
+        copy_ids = request.form.getlist("copy_item_ids")
+        # print copy_ids
 
-    for i in copy_ids:
-        i = int(i)
-        old_item = Item.query.filter_by(item_id=i).first()
+        for i in copy_ids:
+            i = int(i)
+            old_item = Item.query.filter_by(item_id=i).first()
 
-        new_item = Item(item_name=old_item.item_name,
-                    item_address=old_item.item_address,
-                    item_comments=old_item.item_comments,
-                    category_id=old_item.category_id)
+            new_item = Item(item_name=old_item.item_name,
+                        item_address=old_item.item_address,
+                        item_comments=old_item.item_comments,
+                        category_id=old_item.category_id)
 
-    category = Category.query.filter_by(category_id=old_item.category_id).first()
+        category = Category.query.filter_by(category_id=old_item.category_id).first()
+        users_lists = List.list_name.query.filter_by(user_id = user_id).all()
+        
+    except:
+        session['current_user'] = None
+        flash('Please log in to copy an item. Thanks :)')
+        return render_template("login.html")
 
     return render_template("copy_items.html",
-                            category=category,
-                            item_name=new_item.item_name,
-                            item_address=new_item.item_address,
-                            item_comments=new_item.item_comments)
+                                category=category,
+                                item_name=new_item.item_name,
+                                item_address=new_item.item_address,
+                                item_comments=new_item.item_comments)
 
 
 @app.route('/copy_items_to_list', methods=["POST"])
@@ -245,6 +266,9 @@ def copy_items_to_list():
     """save copied item(s) to list"""
 
     user_id = session['current_user']
+
+    # users_lists = User.query.filter_by(user.list_name = user.list_name)
+    # want users existing lists (to populate dropdown to be made on form)
 
     list_name = request.form.get("list_name")
     location_name = request.form.get("location_name")
@@ -264,13 +288,14 @@ def copy_items_to_list():
                     location_id=location_id,
                     list_name=list_name)
 
+# try flush again for multiples
+
     db.session.add(new_list)
     db.session.commit()
     
     # user_id = session['current_user']
-    # location_id = session['current_location']
+    # location_id = session['current_location'] - refactored
     list_id = session['current_list'] = new_list.list_id
-   
         
     category_name = request.form.get("category_name")
     category = Category.query.filter_by(category_name=category_name).first()
