@@ -13,6 +13,7 @@
         <!-- this doesn't do anything yet, moving on to add many items and will come back with JS -->
 
             <h3>Add item to your List</h3> 
+            {% for item in new_items %}
                 <ul>     
                     <li>Item Name: <input type="text" name="item_name" 
                         value="{{ item_name }}"><br></li>
@@ -26,14 +27,11 @@
                         value="{{ item_address }}"><br></li> 
                     <li>Comments:<input type="text" name="item_comments" 
                         value="{{ item_comments }}"><br></li> 
-                
-        
-
+                     </ul>
+            {% endfor %}
                     <br>
                 Save Item <input type="submit">    
             <br>
             </form>
-        </ul> 
-            
     </div>
 {% endblock %}

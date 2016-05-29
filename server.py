@@ -239,41 +239,47 @@ def copy_items():
         #query to get the checked item ids to copy - they come in a list format
         copy_ids = request.form.getlist("copy_item_ids")
         # print copy_ids
-
+        ids = []
         # unpack the list of item ids to copy
         for i in copy_ids: 
-            #set the strings to integers
             i = int(i)
+            ids.append(i)
+        
+        new_items = []
+        for i in ids:
             #query to get the item that goes with item id
             old_item = Item.query.filter_by(item_id=i).first()
-
+            
             #passing the old_item data into the new_item for editing
             new_item = Item(item_name=old_item.item_name,
                         item_address=old_item.item_address,
                         item_comments=old_item.item_comments,
                         category_id=old_item.category_id)
 
-        #setting the variable category to represent the old category id being 
-        #shown on the copy_items html page
+            new_items.append(new_item)
+        
+        print new_items
+        # db.session.add_all()
+#setting the variable category to represent the old category id being shown on the copy_items html page
         category = Category.query.filter_by(category_id=old_item.category_id).first()
 
     # want users existing lists (to populate dropdown to be made on form)
+    #query to get current users lists
         user_lists = List.query.filter_by(user_id = user_id).all()
-        
+        #list to put them in
         list_names = []
-        
+        #for loop to fetch each list_name and put it in the list_names []
         for l in user_lists:
             # list_names = l.list_name ( gives just the last list name)
             list_names.append(l.list_name)
-            print list_names
-
-
+            # print list_names
         
     except session['current_user'] == None:
         flash('Please log in to copy an item. Thanks :)')
         return render_template("login.html")
 
     return render_template("copy_items.html",
+                                new_items=new_items,
                                 list_names=list_names,
                                 category=category,
                                 item_name=new_item.item_name,
