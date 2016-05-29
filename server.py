@@ -7,6 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, List, Location, Category, Item
 
+from helper import *
 
 app = Flask(__name__)
 
@@ -233,28 +234,47 @@ def copy_items():
 
     try:
         user_id = session['current_user']
+        # print session
 
+        #query to get the checked item ids to copy - they come in a list format
         copy_ids = request.form.getlist("copy_item_ids")
         # print copy_ids
 
-        for i in copy_ids:
+        # unpack the list of item ids to copy
+        for i in copy_ids: 
+            #set the strings to integers
             i = int(i)
+            #query to get the item that goes with item id
             old_item = Item.query.filter_by(item_id=i).first()
 
+            #passing the old_item data into the new_item for editing
             new_item = Item(item_name=old_item.item_name,
                         item_address=old_item.item_address,
                         item_comments=old_item.item_comments,
                         category_id=old_item.category_id)
 
+        #setting the variable category to represent the old category id being 
+        #shown on the copy_items html page
         category = Category.query.filter_by(category_id=old_item.category_id).first()
-        users_lists = List.list_name.query.filter_by(user_id = user_id).all()
+
+    # want users existing lists (to populate dropdown to be made on form)
+        user_lists = List.query.filter_by(user_id = user_id).all()
         
-    except:
-        session['current_user'] = None
+        list_names = []
+        
+        for l in user_lists:
+            # list_names = l.list_name ( gives just the last list name)
+            list_names.append(l.list_name)
+            print list_names
+
+
+        
+    except session['current_user'] == None:
         flash('Please log in to copy an item. Thanks :)')
         return render_template("login.html")
 
     return render_template("copy_items.html",
+                                list_names=list_names,
                                 category=category,
                                 item_name=new_item.item_name,
                                 item_address=new_item.item_address,
@@ -267,10 +287,9 @@ def copy_items_to_list():
 
     user_id = session['current_user']
 
-    # users_lists = User.query.filter_by(user.list_name = user.list_name)
-    # want users existing lists (to populate dropdown to be made on form)
-
     list_name = request.form.get("list_name")
+    # list_names = request.form.get("list_names")
+
     location_name = request.form.get("location_name")
 
     location = Location.query.filter_by(location_name=location_name).first()
@@ -296,26 +315,14 @@ def copy_items_to_list():
     # user_id = session['current_user']
     # location_id = session['current_location'] - refactored
     list_id = session['current_list'] = new_list.list_id
-        
-    category_name = request.form.get("category_name")
+      
+
+    category_name = request.form.get("category_name")  
     category = Category.query.filter_by(category_name=category_name).first()
+   
     category_id = category.category_id
 
-    item_name = request.form.get("item_name")
-    item_address = request.form.get("item_address")
-    item_comments = request.form.get("item_comments")
-
-    # item_name, item_address, item_contents = get_item_choices(request)
-
-    # def get_item_choices(request):
-
-    #    item_name = request.form.get("item_name")
-    #     item_address = request.form.get("item_address")
-    #     item_comments = request.form.get("item_comments")
-
-    #     return (item_name, item_address, item_contents)
-
-
+    item_name, item_address, item_comments = get_item_choices(request)
 
     final_item = Item(list_id=list_id,
                     category_id=category_id,
@@ -433,18 +440,12 @@ def add_another_item():
     list_id = session['current_list']
     print session
 
+    item_name, item_address, item_comments = get_item_choices(request)
+
     category_name = request.form.get("category_name")
-    # query categories to get the id 
     category = Category.query.filter_by(category_name=category_name).first()
-    
     session['current_category'] = category.category_id
-    # print session
     category_id = session['current_category']
-    print session
-    
-    item_name = request.form.get("item_name")
-    item_address = request.form.get("item_address")
-    item_comments = request.form.get("item_comments")
 
     new_item = Item(list_id=list_id,
                     category_id=category_id,
