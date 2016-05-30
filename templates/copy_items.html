@@ -11,12 +11,19 @@
         <br>
         Or choose an existing list name:{{ list_names }}
         <!-- this doesn't do anything yet, moving on to add many items and will come back with JS -->
+        <li>Your lists:  
+                        <select name="{% for list_names in list_names %}">
+                            <option value="{{list_names}}"></option>
+                            {% endfor %}
+                        </select>  </li>
+
 
             <h3>Add item to your List</h3> 
+
             {% for item in new_items %}
                 <ul>     
                     <li>Item Name: <input type="text" name="item_name" 
-                        value="{{ item_name }}"><br></li>
+                        value="{{ item.item_name }}"><br></li>
                     <li>Current Category: {{ category.category_name }} 
                         <select name="category_name">
                             <option value="restaurant">Restaurant</option>
@@ -24,9 +31,9 @@
                             <option value="museum">Museum</option>
                         </select>  </li>
                     <li>Address: <input type="text" name="item_address" 
-                        value="{{ item_address }}"><br></li> 
+                        value="{{ item.item_address }}"><br></li> 
                     <li>Comments:<input type="text" name="item_comments" 
-                        value="{{ item_comments }}"><br></li> 
+                            value="{{ item.item_comments }}"><br></li> 
                      </ul>
             {% endfor %}
                     <br>

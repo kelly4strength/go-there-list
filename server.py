@@ -244,27 +244,26 @@ def copy_items():
         for i in copy_ids: 
             i = int(i)
             ids.append(i)
-        
+            print ids
         new_items = []
+
         for i in ids:
             #query to get the item that goes with item id
-            old_item = Item.query.filter_by(item_id=i).first()
-            
-            #passing the old_item data into the new_item for editing
-            new_item = Item(item_name=old_item.item_name,
+            old_item = Item.query.filter_by(item_id=i).one() 
+
+        #passing the old_item data into the new_item for editing
+        # for old_item in new_items:
+            new_item = Item(item_name=old_item.item_name, 
                         item_address=old_item.item_address,
                         item_comments=old_item.item_comments,
                         category_id=old_item.category_id)
-
+            
             new_items.append(new_item)
         
-        print new_items
-        # db.session.add_all()
-#setting the variable category to represent the old category id being shown on the copy_items html page
-        category = Category.query.filter_by(category_id=old_item.category_id).first()
+        #sets the variable category to represent the old category id being shown on the copy_items html page
+        category = Category.query.filter_by(category_id=1).first()
 
-    # want users existing lists (to populate dropdown to be made on form)
-    #query to get current users lists
+    #query to get current users lists(to populate dropdown to be made on form)
         user_lists = List.query.filter_by(user_id = user_id).all()
         #list to put them in
         list_names = []
@@ -312,7 +311,6 @@ def copy_items_to_list():
     new_list = List(user_id=user_id,
                     location_id=location_id,
                     list_name=list_name)
-
 # try flush again for multiples
 
     db.session.add(new_list)
@@ -321,7 +319,6 @@ def copy_items_to_list():
     # user_id = session['current_user']
     # location_id = session['current_location'] - refactored
     list_id = session['current_list'] = new_list.list_id
-      
 
     category_name = request.form.get("category_name")  
     category = Category.query.filter_by(category_name=category_name).first()
