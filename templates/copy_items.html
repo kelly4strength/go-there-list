@@ -9,17 +9,16 @@
         <br> 
         Choose a new list name <input type="text" name="list_name">
         <br>
-        Or choose an existing list name:{{ list_names }}
-        <!-- this doesn't do anything yet, moving on to add many items and will come back with JS -->
-        <li>Your lists:  
-                        <select name="{% for list_names in list_names %}">
-                            <option value="{{list_names}}"></option>
-                            {% endfor %}
-                        </select>  </li>
+        
+        <li>Or choose an existing list of yours:
+            <select id="existing_list"name="existing_list_name">
+                {% for l in list_names %}
+                <option value="existing_list_name">{{ l }}</option> 
+                   {% endfor %}    
+                    </select> </li>
 
 
             <h3>Add item to your List</h3> 
-
             {% for item in new_items %}
                 <ul>     
                     <li>Item Name: <input type="text" name="item_name" 

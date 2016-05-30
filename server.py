@@ -263,15 +263,15 @@ def copy_items():
         #sets the variable category to represent the old category id being shown on the copy_items html page
         category = Category.query.filter_by(category_id=1).first()
 
-    #query to get current users lists(to populate dropdown to be made on form)
+        #query to get current users lists(to populate dropdown to be made on form)
         user_lists = List.query.filter_by(user_id = user_id).all()
         #list to put them in
         list_names = []
         #for loop to fetch each list_name and put it in the list_names []
         for l in user_lists:
-            # list_names = l.list_name ( gives just the last list name)
             list_names.append(l.list_name)
-            # print list_names
+            print list_names
+            
         
     except session['current_user'] == None:
         flash('Please log in to copy an item. Thanks :)')
