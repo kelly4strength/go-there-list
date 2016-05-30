@@ -292,36 +292,54 @@ def copy_items_to_list():
 
     user_id = session['current_user']
 
-    list_name = request.form.get("list_name")
-    # list_names = request.form.get("list_names")
+    # list_name = request.form.get("list_name")
+# or
+    existing_list_name = request.form.get("existing_list_name")
+    print existing_list_name
+    
+    existing_list = List.query.filter_by(list_name=existing_list_name).first()
+    print existing_list
 
-    location_name = request.form.get("location_name")
+    list_id = existing_list.list_id
+    print list_id
 
-    location = Location.query.filter_by(location_name=location_name).first()
+    # list_id = session['current_list'] = list_name.location_id
+    # if list_name == None:
+    #     use the existing list name 
+    #     and add items to that list...
 
-    if location == None:
-        new_location = Location(location_name=location_name)
-        db.session.add(new_location)
-        db.session.commit()
+    # location_name = request.form.get("location_name")
 
-        location = Location.query.filter_by(location_name=location_name).first()
+    # location = Location.query.filter_by(location_name=location_name).first()
 
-    location_id = session['current_location'] = location.location_id
+    # if location == None:
+    #     new_location = Location(location_name=location_name)
+    #     db.session.add(new_location)
+    #     db.session.commit()
 
-    new_list = List(user_id=user_id,
-                    location_id=location_id,
-                    list_name=list_name)
+    #     location = Location.query.filter_by(location_name=location_name).first()
+
+    #     location_id = session['current_location'] = location.location_id
+
+    #     new_list = List(user_id=user_id,
+    #                 location_id=location_id,
+    #                 list_id=list_id)
+        
+        # db.session.add(new_list)
+        # db.session.commit()
 # try flush again for multiples
 
-    db.session.add(new_list)
-    db.session.commit()
+    
     
     # user_id = session['current_user']
     # location_id = session['current_location'] - refactored
-    list_id = session['current_list'] = new_list.list_id
+    # list_id = session['current_list'] = new_list.list_id
+    # for item in new_items:
+    category_name = request.form.getlist("category_name")  
+    print category_name
 
-    category_name = request.form.get("category_name")  
-    category = Category.query.filter_by(category_name=category_name).first()
+    # category = Category.query.filter_by(category_name=category_name).first()
+
    
     category_id = category.category_id
 

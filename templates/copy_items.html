@@ -5,15 +5,14 @@
 <h2>Copy Item</h2>
     <div>        
         <form action="/copy_items_to_list" method="POST">
-        Choose a location (city) <input type="text" name="location_name">
+        <!-- Choose a location (city) <input type="text" name="location_name"> -->
         <br> 
-        Choose a new list name <input type="text" name="list_name">
+        <!-- Choose a new list name <input type="text" name="list_name"> -->
         <br>
-        
-        <li>Or choose an existing list of yours:
-            <select id="existing_list"name="existing_list_name">
+        Or save to an existing list:
+            <select name="existing_list_name">
                 {% for l in list_names %}
-                <option value="existing_list_name">{{ l }}</option> 
+                <option value="{{ l }}">{{ l }}</option> 
                    {% endfor %}    
                     </select> </li>
 
