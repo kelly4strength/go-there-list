@@ -1,14 +1,16 @@
 {% extends 'base.html' %}
+
 {% block content %}
 
 <h2>Would you like to add another item to your list?</h2>
 	<div>
 		<p hidden List ID: {{ list_id }}> </p>
-		<br>
+			<br>
 		<form action="/new_item" method="POST">
 		    <input type="radio" name="YN" value="yes">YES
 		    <input type="radio" name="YN" value="no">NO
 		    <input type="submit"> 
 		</form>
 	</div>
+
 {% endblock %}

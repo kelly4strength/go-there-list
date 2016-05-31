@@ -133,11 +133,10 @@ def list_details(list_id):
 def my_lists():
     """Show all lists created by user""" 
 
-    # if session.get('current_user') == None:
-    #     flash ("please login first")
-    #     return render_template("login.html") 
-
-    render_template("login.html") = login_first(current_user)
+    #get help making this a helper function
+    if session.get('current_user') == None:
+        flash ("please login first")
+        return render_template("login.html") 
         
     user_id = session['current_user']
 

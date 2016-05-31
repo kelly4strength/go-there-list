@@ -5,38 +5,32 @@
 <h2>Copy Item</h2>
     <div>        
         <form action="/copy_items_to_list" method="POST">
-        <!-- Choose a location (city) <input type="text" name="location_name"> -->
-        <br> 
-        <!-- Choose a new list name <input type="text" name="list_name"> -->
-        <br>
-        Or save to an existing list:
+        Choose a list:
             <select name="existing_list_name">
                 {% for l in list_names %}
-                <option value="{{ l }}">{{ l }}</option> 
-                   {% endfor %}    
-                    </select> </li>
-
-
-            <h3>Add item to your List</h3> 
-            {% for item in new_items %}
-                <ul>     
-                    <li>Item Name: <input type="text" name="item_name" 
-                        value="{{ item.item_name }}"><br></li>
-                    <li>Current Category: {{ category.category_name }} 
-                        <select name="category_name">
-                            <option value="restaurant">Restaurant</option>
-                            <option value="bar">Bar</option>
-                            <option value="museum">Museum</option>
-                        </select>  </li>
-                    <li>Address: <input type="text" name="item_address" 
-                        value="{{ item.item_address }}"><br></li> 
-                    <li>Comments:<input type="text" name="item_comments" 
-                            value="{{ item.item_comments }}"><br></li> 
-                     </ul>
-            {% endfor %}
-                    <br>
-                Save Item <input type="submit">    
+                    <option value="{{ l }}">{{ l }}</option> 
+                        {% endfor %}    
+                            </select> </li>
+                            <h3>Add item to your List</h3> 
+                                {% for item in new_items %}
+                                    <ul>     
+                                        <li>Item Name: <input type="text" name="item_name" 
+                                            value="{{ item.item_name }}"><br></li>
+                                        <li>Current Category: {{ category.category_name }} 
+                                            <select name="category_name">
+                                                <option value="restaurant">Restaurant</option>
+                                                <option value="bar">Bar</option>
+                                                <option value="museum">Museum</option>
+                                            </select>  </li>
+                                        <li>Address: <input type="text" name="item_address" 
+                                            value="{{ item.item_address }}"><br></li> 
+                                        <li>Comments:<input type="text" name="item_comments" 
+                                                value="{{ item.item_comments }}"><br></li> 
+                                    </ul>
+                                {% endfor %}
+                            <br>
+                    Save Item <input type="submit">    
             <br>
-            </form>
+        </form>
     </div>
 {% endblock %}
