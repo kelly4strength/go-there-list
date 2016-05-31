@@ -13,3 +13,11 @@ def get_item_choices(request):
     item_comments = request.form.get("item_comments")
     
     return (item_name, item_address, item_comments)
+
+
+# def login_first(current_user):
+
+#     if session.get('current_user') == None:
+#         flash ("please login first")
+#         return render_template("login.html") 
+

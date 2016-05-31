@@ -63,6 +63,7 @@ def user_add():
     password = request.form.get("password")
     user_name = request.form.get("user_name")
 
+    #question_ why doesn't .one() work?
     if User.query.filter_by(email=email).first() == None:
         new_user = User(email=email,
                         password=password, 
@@ -81,9 +82,8 @@ def user_validation():
     email = request.form.get("email")
     password = request.form.get("password")
     
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(email=email).one()
     #add try and except for cases where the emails are duplicates
-    #and change to .one rather than .first
 
     if user == None:
         flash("Looks like you need to register")
@@ -104,7 +104,6 @@ def log_user_out_of_session():
     """remove user from session"""
 
     session.clear()
-    # print "session cleared"
     flash("You have logged out. See you next time.")
     
     return render_template("homepage.html")
@@ -134,14 +133,14 @@ def list_details(list_id):
 def my_lists():
     """Show all lists created by user""" 
 
-    if session.get('current_user') == None:
-        flash ("please login first")
-        return render_template("login.html") 
+    # if session.get('current_user') == None:
+    #     flash ("please login first")
+    #     return render_template("login.html") 
+
+    render_template("login.html") = login_first(current_user)
         
     user_id = session['current_user']
 
-    # if you add a number to the URL w/out a user attached you get 
-    # NoResultFound: No row was found for one() -need to add route for errors
     return render_template("my_lists.html", 
                             user=User.query.filter_by(user_id=user_id).one(), 
                             lists=List.query.filter_by(user_id=user_id).all())
@@ -210,14 +209,14 @@ def delete_item():
 
     list_id = session.get('current_list')
     item_id = session.get('current_item')
-    user_id= session.get('current_user')
-                             # set up way to deal with None
+    user_id = session.get('current_user')
+        # set up way to deal with None
         # use .get - safer, so you avoid errors 
         # If there is nothing in the session, just returns None 
         # from user_id= session['current_user']
 
-    to_delete = Item.query.filter_by(item_id=item_id).first()
-                            # .one()
+    to_delete = Item.query.filter_by(item_id=item_id).one()
+                            
     db.session.delete(to_delete)
     db.session.commit()
 
@@ -233,21 +232,22 @@ def copy_items():
     """copy item(s) from list_detail page"""
 
     try:
-        user_id = session['current_user']
-        # print session
+        user_id = session.get('current_user')
 
         #query to get the checked item ids to copy - they come in a list format
         copy_ids = request.form.getlist("copy_item_ids")
-        # print copy_ids
+        
         ids = []
         # unpack the list of item ids to copy
+        
         for i in copy_ids: 
             i = int(i)
             ids.append(i)
-            print ids
+        
         new_items = []
 
         for i in ids:
+            
             #query to get the item that goes with item id
             old_item = Item.query.filter_by(item_id=i).one() 
 
@@ -257,15 +257,16 @@ def copy_items():
                         item_comments=old_item.item_comments,
                         category_id=old_item.category_id)
             
+            #sets the variable category to represent the old category id being shown on the copy_items html page
+            category = Category.query.filter_by(category_id=old_item.category_id).first()
+
             new_items.append(new_item)
-        
-        #sets the variable category to represent the old category id being shown on the copy_items html page
-        category = Category.query.filter_by(category_id=1).first()
 
         #query to get current users lists(to populate dropdown to be made on form)
         user_lists = List.query.filter_by(user_id = user_id).all()
-        #list to put them in
+        
         list_names = []
+        
         #for loop to fetch each list_name and put it in the list_names []
         for l in user_lists:
             list_names.append(l.list_name)
@@ -291,7 +292,6 @@ def copy_items_to_list():
 
     user_id = session['current_user']
 
-
     existing_list_name = request.form.get("existing_list_name")
     print existing_list_name
     
@@ -301,40 +301,6 @@ def copy_items_to_list():
     list_id = existing_list.list_id
     print list_id
 
-        # list_name = request.form.get("list_name")
-
-    # list_id = session['current_list'] = list_name.location_id
-    # if list_name == None:
-    #     use the existing list name 
-    #     and add items to that list...
-
-    # location_name = request.form.get("location_name")
-
-    # location = Location.query.filter_by(location_name=location_name).first()
-
-    # if location == None:
-    #     new_location = Location(location_name=location_name)
-    #     db.session.add(new_location)
-    #     db.session.commit()
-
-    #     location = Location.query.filter_by(location_name=location_name).first()
-
-    #     location_id = session['current_location'] = location.location_id
-
-    #     new_list = List(user_id=user_id,
-    #                 location_id=location_id,
-    #                 list_id=list_id)
-        
-        # db.session.add(new_list)
-        # db.session.commit()
-# try flush again for multiples
-
-    # user_id = session['current_user']
-    # location_id = session['current_location'] - refactored
-    # list_id = session['current_list'] = new_list.list_id
-    # for item in new_items:
-
-   
     category_name = request.form.getlist("category_name")  
     
     categories = []
@@ -344,29 +310,10 @@ def copy_items_to_list():
         category_id = category.category_id   
         categories.append(category_id)
         print categories
-
     
     item_name = request.form.getlist("item_name")
-    # item_names = []
-    # for i in item_name: 
-    #     item_names.append(i)
-    #     print item_names
-
-    
     item_address = request.form.getlist("item_address")
-    # item_addresses = []
-    # for i in item_address: 
-    #     item_addresses.append(i)
-    #     print item_addresses
-
-
-    
     item_comments = request.form.getlist("item_comments")
-    # item_comments_list = []
-    # for i in item_comments: 
-    #     item_comments_list.append(i)
-    #     print item_comments_list
-
 
     for num in range(len(categories)):
 
@@ -375,13 +322,12 @@ def copy_items_to_list():
                     item_name=item_name[num],
                     item_address=item_address[num],
                     item_comments=item_comments[num])
-
-        print final_item
+        #print final_item
 
         db.session.add(final_item)
         db.session.commit()
 
-    flash ("%s has been copied" % item_name )
+    flash ("%s has been copied to your list" % item_name )
 
     return render_template("list_detail.html", 
                             lists=List.query.filter_by(list_id=list_id).first(), 
@@ -405,8 +351,9 @@ def create_list():
 def start_new_list():
     """Add first item to newly created list"""
 
-    #session carried over - remember that thing I asked you to remember? Here it is.
     user_id = session['current_user']
+
+    list_name = request.form.get("list_name") 
 
     location_name = request.form.get("location_name")
 
@@ -417,16 +364,11 @@ def start_new_list():
         db.session.add(new_location)
         db.session.commit()
 
-        location = Location.query.filter_by(location_name=location_name).first()
+        location = Location.query.filter_by(location_name=location_name).one()
 
-        #telling session to please remember this now
         session['current_location'] = location.location_id
-        print session
 
     location_id = session['current_location']
-
-    #query to set the variable list_name in order to pass it into the new_list object
-    list_name = request.form.get("list_name") 
 
     new_list = List(user_id=user_id,
                     location_id=location_id,
@@ -434,16 +376,15 @@ def start_new_list():
 
     db.session.add(new_list)
     db.session.commit()
-                                                # .one()
     
-    lists = List.query.filter_by(list_name=list_name).first()
+    lists = List.query.filter_by(list_name=list_name).one()
     
     user_id = session['current_user']
     location_id = session['current_location']
     list_id = session['current_list'] = lists.list_id
 
-    category_name = request.form.get("category_name")      # .one()
-    category = Category.query.filter_by(category_name=category_name).first()
+    category_name = request.form.get("category_name")
+    category = Category.query.filter_by(category_name=category_name).one()
     
     category_id = session['current_category'] = category.category_id
 
@@ -475,7 +416,7 @@ def new_item():
                                 list_id=list_id)
 
     return render_template("list_detail.html", 
-                            lists=List.query.filter_by(list_id=list_id).first(), 
+                            lists=List.query.filter_by(list_id=list_id).one(), 
                             items=Item.query.filter_by(list_id=list_id).all())
 
 
@@ -484,16 +425,13 @@ def add_another_item():
     """add item to list"""
 
     user_id = session['current_user']
-    # location_id = session['current_location']
     list_id = session['current_list']
-    print session
 
     item_name, item_address, item_comments = get_item_choices(request)
 
     category_name = request.form.get("category_name")
-    category = Category.query.filter_by(category_name=category_name).first()
-    session['current_category'] = category.category_id
-    category_id = session['current_category']
+    category = Category.query.filter_by(category_name=category_name).one()
+    category_id = session['current_category'] = category.category_id
 
     new_item = Item(list_id=list_id,
                     category_id=category_id,
