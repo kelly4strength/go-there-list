@@ -251,8 +251,7 @@ def copy_items():
             #query to get the item that goes with item id
             old_item = Item.query.filter_by(item_id=i).one() 
 
-        #passing the old_item data into the new_item for editing
-        # for old_item in new_items:
+            #passing the old_item data into the new_item for editing
             new_item = Item(item_name=old_item.item_name, 
                         item_address=old_item.item_address,
                         item_comments=old_item.item_comments,
@@ -292,8 +291,7 @@ def copy_items_to_list():
 
     user_id = session['current_user']
 
-    # list_name = request.form.get("list_name")
-# or
+
     existing_list_name = request.form.get("existing_list_name")
     print existing_list_name
     
@@ -302,6 +300,8 @@ def copy_items_to_list():
 
     list_id = existing_list.list_id
     print list_id
+
+        # list_name = request.form.get("list_name")
 
     # list_id = session['current_list'] = list_name.location_id
     # if list_name == None:
@@ -329,30 +329,57 @@ def copy_items_to_list():
         # db.session.commit()
 # try flush again for multiples
 
-    
-    
     # user_id = session['current_user']
     # location_id = session['current_location'] - refactored
     # list_id = session['current_list'] = new_list.list_id
     # for item in new_items:
-    category_name = request.form.getlist("category_name")  
-    print category_name
-
-    # category = Category.query.filter_by(category_name=category_name).first()
 
    
-    category_id = category.category_id
+    category_name = request.form.getlist("category_name")  
+    
+    categories = []
 
-    item_name, item_address, item_comments = get_item_choices(request)
+    for i in category_name:
+        category = Category.query.filter_by(category_name=i).one()
+        category_id = category.category_id   
+        categories.append(category_id)
+        print categories
 
-    final_item = Item(list_id=list_id,
-                    category_id=category_id,
-                    item_name=item_name,
-                    item_address=item_address,
-                    item_comments=item_comments)
+    
+    item_name = request.form.getlist("item_name")
+    # item_names = []
+    # for i in item_name: 
+    #     item_names.append(i)
+    #     print item_names
 
-    db.session.add(final_item)
-    db.session.commit()
+    
+    item_address = request.form.getlist("item_address")
+    # item_addresses = []
+    # for i in item_address: 
+    #     item_addresses.append(i)
+    #     print item_addresses
+
+
+    
+    item_comments = request.form.getlist("item_comments")
+    # item_comments_list = []
+    # for i in item_comments: 
+    #     item_comments_list.append(i)
+    #     print item_comments_list
+
+
+    for num in range(len(categories)):
+
+        final_item = Item(list_id=list_id,
+                    category_id=categories[num],
+                    item_name=item_name[num],
+                    item_address=item_address[num],
+                    item_comments=item_comments[num])
+
+        print final_item
+
+        db.session.add(final_item)
+        db.session.commit()
 
     flash ("%s has been copied" % item_name )
 
