@@ -4,16 +4,19 @@
 
 {% block content %}
 
+<title>Create List Form</title>
+
 <h2>Create a new List</h2>
     <div>
-        <form action="/create_list_form" method="POST">
-            Choose a location (city) <input type="text" name="location_name">
+        <form action="/create_list_form" method="POST" id="create_list_form">
+            Choose a list name <input type="text" name="list_name" required>
             <br> 
-            Choose a list name <input type="text" name="list_name">
+            Choose a location (city) <input type="text" name="location_name" required>
             <br>
-            Add an item to your List      
-                
+            Add an item to your List   
+
                 {{ itemschoices() }}
+                
         </form>
     </div>
 {% endblock %}

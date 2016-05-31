@@ -1,6 +1,9 @@
 
 {% extends 'base.html' %}
+
 {% block content %}
+
+<title>Copy Item(s) Form</title>
 
 <h2>Copy Item</h2>
     <div>        
@@ -15,7 +18,7 @@
                                 {% for item in new_items %}
                                     <ul>     
                                         <li>Item Name: <input type="text" name="item_name" 
-                                            value="{{ item.item_name }}"><br></li>
+                                            value="{{ item.item_name }}" required><br></li>
                                         <li>Current Category: {{ category.category_name }} 
                                             <select name="category_name">
                                                 <option value="restaurant">Restaurant</option>
@@ -23,9 +26,9 @@
                                                 <option value="museum">Museum</option>
                                             </select>  </li>
                                         <li>Address: <input type="text" name="item_address" 
-                                            value="{{ item.item_address }}"><br></li> 
+                                            value="{{ item.item_address }}" required><br></li> 
                                         <li>Comments:<input type="text" name="item_comments" 
-                                                value="{{ item.item_comments }}"><br></li> 
+                                                value="{{ item.item_comments }}" required><br></li> 
                                     </ul>
                                 {% endfor %}
                             <br>

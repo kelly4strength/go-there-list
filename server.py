@@ -63,7 +63,6 @@ def user_add():
     password = request.form.get("password")
     user_name = request.form.get("user_name")
 
-    #question_ why doesn't .one() work?
     if User.query.filter_by(email=email).first() == None:
         new_user = User(email=email,
                         password=password, 
