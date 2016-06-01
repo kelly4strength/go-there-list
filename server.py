@@ -428,7 +428,7 @@ def add_another_item():
     item_name, item_address, item_comments = get_item_choices(request)
 
     category_name = request.form.get("category_name")
-    category = Category.query.filter_by(category_name=category_name).one()
+    category = Category.query.filter_by(category_name=category_name).first()
     category_id = session['current_category'] = category.category_id
 
     new_item = Item(list_id=list_id,

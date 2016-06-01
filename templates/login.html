@@ -3,14 +3,41 @@
 
 <div>
 	<h2>Login to Go Lists</h2>
-		<form action="/user_validation" method="POST">
-		    Email <input type="text" required name="email"> 
-		        <br>
-		    Password <input type="text" required name="password">
-		        <br>
-		    Login <input type="submit">    
-		        <br>
-		</form>
-</div>
+<!-- from bootstrap -->
+<form action="/user_validation" method="POST">
+  <div class="form-group row">
+    <label for="inputEmail3" class="col-sm-2 form-control-label">Email</label>
+    <!-- for the text box -->
+    <div class="col-sm-5">
+      <input type="email" name="email" class="form-control" id="inputEmail3" placeholder="Email">
+    </div>
+  </div>
+  
+  <div class="form-group row">
+    <label for="inputPassword3" class="col-sm-2 form-control-label">Password</label>
+    <div class="col-sm-5">
+      <input type="password" name="password" class="form-control" id="inputPassword3" placeholder="Password">
+    </div>
+  </div>
+
+   <div class="form-group row">
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" class="btn btn-secondary">Sign in</button>
+    </div>
+  </div>
+
+</form>
 
 {% endblock %}
+
+<!-- old html
+<div>
+	<form action="/user_validation" method="POST">
+    Email <input type="text" required name="email"> 
+        <br>
+    Password <input type="text" required name="password">
+        <br>
+    Login <input type="submit">    
+        <br>
+</form>
+</div> -->
