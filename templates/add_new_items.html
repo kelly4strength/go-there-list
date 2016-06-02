@@ -8,36 +8,87 @@
 <h2>Add an item to your List</h2>
  
 	<!-- BOOTSTRAP version -->
-<div>
-	<form action="/add_another_item" method="POST" id="item_form">
-		Choose a category for your item:
-		<select class="c-select" name="category_name">Categories
-			<option selected name="category_name">Category</option>
-			<option value="restaurant">Restaurant</option>
-			<option value="bar">Bar</option>
-			<option value="museum">Museum</option>
-		</select>
-			<br>
-			<br>
-		<fieldset class="form-group">
-			<label for="formGroupExampleInput2" class="col-sm-2 form-control-label">Name</label>
-			<input type="text" name="item_name" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
-		</fieldset>
 
-		<fieldset class="form-group">
-			<label for="formGroupExampleInput2" class="col-sm-2 form-control-label">Address</label>
-			<input type="text" name=name="item_address" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
-		</fieldset>
+<form action="/add_another_item" method="POST" id="itemForm" class="form-horizontal">
+	
+	<div class="form-group">
+		<div class="col-xs-4">
+			Choose a category for your item:
+			<!-- add a check here that this is added before submit or get error -->
+			<select  name="category_name">Categories
+				<option selected name="category_name">Category</option>
+				<option value="restaurant">Restaurant</option>
+				<option value="bar">Bar</option>
+				<option value="museum">Museum</option>
+			</select>
 
-		<fieldset class="form-group">
-			<label for="exampleTextarea" class="col-sm-2 form-control-label">Item comments</label>
-			<textarea name="item_comments" class="form-control" id="exampleTextarea" rows="3"></textarea>
-		</fieldset>
+			<fieldset>
+				<label for="formGroupAdd"  class="col-sm-2 form-control-label">Name</label>
+				<input type="text" name="item_name" class="form-control" id="itemName" placeholder="Item Name">
+			</fieldset>
 
-			<input type="submit">   
-	</form>
+			<fieldset>
+				<label for="formGroupAdd" class="col-sm-2 form-control-label">Address</label>
+				<input type="text" name=name="item_address" class="form-control" id="itemAddress" placeholder="Item Address">
+			</fieldset>
 
-</div>
+			<fieldset>
+				<label "formGroupAdd"  class="col-sm-2 form-control-label">Item comments</label>
+				<textarea name="item_comments" class="form-control" id="CommentsTextArea" rows="3"placeholder="Item Comments"></textarea>
+			</fieldset>
+		</div>
+	<!-- </div> -->
+
+				<div class = "col-xs-1">
+                    <button type="button" class="btn btn-default addButton">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+	</div>
+
+	<!-- <form action="/add_another_item" method="POST" id="itemForm"> -->
+
+		<div class="form-group" id="itemTemplate" hidden>>
+			<div class="col-xs-4 col-xs-offset-1">
+				Choose a category for your item:
+					<!-- add a check here that this is added before submit or get error -->
+					<select  name="category_name">Categories
+						<option selected name="category_name">Category</option>
+						<option value="restaurant">Restaurant</option>
+						<option value="bar">Bar</option>
+						<option value="museum">Museum</option>
+					</select>
+
+					<fieldset>
+						<label for="formGroupAdd"  class="col-sm-2 form-control-label">Name</label>
+						<input type="text" name="item_name" class="form-control" id="itemName" placeholder="Item Name">
+					</fieldset>
+
+					<fieldset>
+						<label for="formGroupAdd" class="col-sm-2 form-control-label">Address</label>
+						<input type="text" name=name="item_address" class="form-control" id="itemAddress" placeholder="Item Address">
+					</fieldset>
+
+					<fieldset>
+						<label "formGroupAdd"  class="col-sm-2 form-control-label">Item comments</label>
+						<textarea name="item_comments" class="form-control" id="CommentsTextArea" rows="3"placeholder="Item Comments"></textarea>
+					</fieldset>
+				</div>
+		</div>
+
+		 	<div class = "col-xs-1">
+                <button type="button" class="btn btn-default removeButton">
+                    <span class="glyphicon glyphicon-minus"></span>
+                </button>
+            </div>
+        
+	        <input type="submit" class="btn btn-primary">
+	  
+	
+	</div>
+  </form>
+
+ <script src="/static/add_item_form.js"></script>
 
 {% endblock %}
 
