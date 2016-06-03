@@ -21,23 +21,23 @@ app.jinja_env.undefined = StrictUndefined
 
 @app.route('/')
 def index():
-    """Homepage."""
+    """Homepage"""
 
     return render_template("homepage.html")
 
 
 @app.route("/users")
 def user_list():
-    """Show all users."""
+    """Show all users"""
 
-    return render_template("user_list.html", users=User.query.all())
+    return render_template("users.html", users=User.query.all())
 
 
 @app.route("/lists")
 def all_lists():
-    """Show all user lists."""
+    """Show all lists"""
 
-    return render_template("alL_lists.html", lists=List.query.order_by('list_name').all())
+    return render_template("lists.html", lists=List.query.order_by('list_name').all())
 
 
 @app.route('/login')
@@ -56,7 +56,7 @@ def register():
 
 @app.route('/user_add', methods=["POST"])
 def user_add():
-    """add new users to dbase"""
+    """Add new user to database"""
     #add code to make sure email/username chosen are unique
 
     email = request.form.get("email")
@@ -76,7 +76,7 @@ def user_add():
    
 @app.route('/user_validation', methods=["POST"])
 def user_validation():
-    """Validate user login"""
+    """Validate user credentials"""
 
     email = request.form.get("email")
     password = request.form.get("password")
@@ -100,7 +100,7 @@ def user_validation():
         
 @app.route('/logout')
 def log_user_out_of_session():
-    """remove user from session"""
+    """Logout user, remove user from session"""
 
     session.clear()
     flash("You have logged out. See you next time.")
@@ -110,7 +110,7 @@ def log_user_out_of_session():
 
 @app.route('/users/<int:user_id>')
 def user_page(user_id):
-    """Take user to a page that displays user info"""
+    """Take user to a page that displays chosen user's lists"""
 
     return render_template("user_detail.html", 
                             user=User.query.filter_by(user_id=user_id).one(), 
@@ -119,7 +119,7 @@ def user_page(user_id):
 
 @app.route('/lists/<int:list_id>')
 def list_details(list_id):
-    """Take user to a page that displays a list"""
+    """Take user to a page that displays the chosen list"""
     
     session['current_list'] = list_id
 
@@ -130,7 +130,7 @@ def list_details(list_id):
 
 @app.route('/my_lists')
 def my_lists():
-    """Show all lists created by user""" 
+    """Show all lists created by current user""" 
 
     if session.get('current_user') == None:
         flash ("please login first")
@@ -145,7 +145,7 @@ def my_lists():
 
 @app.route('/item_detail/<int:item_id>')
 def item_details(item_id):
-    """Take user to a page that displays the item in their list"""
+    """Take user to a page that displays item in a list"""
     
     # if session.get('current_user') == None:
     #     flash ("please login first")
@@ -175,7 +175,7 @@ def item_details(item_id):
 
 @app.route('/edit_item_detail', methods=["POST"])
 def edit_item():
-    """user can edit item in their list"""
+    """Page where user can edit an item in their list"""
 
     user_id = session['current_user']
     list_id = session['current_list']
@@ -202,7 +202,7 @@ def edit_item():
 
 @app.route('/delete_item', methods=["POST"])
 def delete_item():
-    """delete an item from your item_detail page"""
+    """Delete an item from database"""
 
     list_id = session.get('current_list')
     item_id = session.get('current_item')
@@ -226,7 +226,7 @@ def delete_item():
 
 @app.route('/copy_items', methods=["POST"])
 def copy_items():
-    """copy item(s) from list_detail page"""
+    """Copy item(s) from list detail page"""
 
     try:
         user_id = session.get('current_user')
@@ -234,19 +234,19 @@ def copy_items():
         #query to get the checked item ids to copy - they come in a list format
         copy_ids = request.form.getlist("copy_item_ids")
         
-        ids = []
+        item_ids = []
         # unpack the list of item ids to copy
         
-        for i in copy_ids: 
-            i = int(i)
-            ids.append(i)
+        for item_id in copy_ids: 
+            item_id = int(item_id)
+            item_ids.append(item_id)
         
         new_items = []
 
-        for i in ids:
+        for item_id in item_ids:
             
             #query to get the item that goes with item id
-            old_item = Item.query.filter_by(item_id=i).one() 
+            old_item = Item.query.filter_by(item_id=item_id).one() 
 
             #passing the old_item data into the new_item for editing
             new_item = Item(item_name=old_item.item_name, 
@@ -265,8 +265,8 @@ def copy_items():
         list_names = []
         
         #for loop to fetch each list_name and put it in the list_names []
-        for l in user_lists:
-            list_names.append(l.list_name)
+        for list_name in user_lists:
+            list_names.append(list_name.list_name)
             print list_names
             
         
@@ -316,7 +316,7 @@ def copy_items_to_list():
 
 @app.route('/create_list')
 def create_list():
-    """Form to create a new list, choose location and list name""" 
+    """Route to form to create a new list""" 
 
     if session.get('current_user') == None:
         flash ("please login before creating a list")
@@ -329,7 +329,7 @@ def create_list():
 
 @app.route('/create_list_form', methods=["POST"])
 def start_new_list():
-    """Add first item to newly created list"""
+    """Form to create a new list"""
 
     user_id = session['current_user']
 
@@ -383,7 +383,7 @@ def start_new_list():
 
 @app.route('/add_item_to_existing_list')
 def add_item_to_existing_list():
-    """Sends user to add another item page"""
+    """Sends user to add item form"""
 
     user_id = session['current_user']
     list_id = session['current_list']
@@ -397,7 +397,7 @@ def add_item_to_existing_list():
 
 @app.route('/add_another_item', methods=["POST"])
 def add_another_item():
-    """add item(s) to a list"""
+    """Form to add item(s) to a list"""
 
     # TODO: fix DOM so that we can get rid of workaround for empty submission
 
