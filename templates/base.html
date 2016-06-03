@@ -2,7 +2,7 @@
 <html>
     <head>
       <div class="col-xs-offset-1">
-      <h2 id="homepage-title"><a href="/">Go Lists</a></h2>
+      <h2 id="homepage-title"><a href="/">go<b>L</b>ists</a></h2>
       </div>
         <meta charset="utf-8">
 
@@ -16,8 +16,15 @@
           
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-
     <style type="text/css">
+
+
+           body {
+           background: #333 url("/static/polarbear.jpg");
+           background-size: cover;
+           text-align: left;
+           }
+
             div {
             font-family: Futura;
             color: #09B2A9;
@@ -38,27 +45,28 @@
             color: #09B2A9;
             }
 
-            img {
-            background-image: url(polarbear.jpg);
-            background-position: center;
-            background-size: cover;
-            width: 100%;
-            height: 100%;
-            }
-  
       </style>
-        <title>Go Lists</title>
+        
+<title>Go Lists</title>
 
-    </head>
+</head>
 
+<body>
 
-  <body>
           <div>
             {% for message in get_flashed_messages()  %}
                 {{ message }}
             {% endfor %}
           </div>
             {% block content %} 
+
+<!-- <div class="site-wrapper" id='loginStuff'>
+   <div class="site-wrapper-inner">
+
+       <h1>Tadah</h1>
+
+   </div>
+ </div> -->
 
   <div id="homepage-nav">
     <nav class="navbar navbar-light bg-faded">

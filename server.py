@@ -132,7 +132,6 @@ def list_details(list_id):
 def my_lists():
     """Show all lists created by user""" 
 
-    #get help making this a helper function
     if session.get('current_user') == None:
         flash ("please login first")
         return render_template("login.html") 
@@ -183,7 +182,7 @@ def edit_item():
     item_id = session['current_item']
 
     update = Item.query.filter_by(item_id=item_id).first()
-                                                        # add .one()
+                                                        
     category_name = request.form.get("category_name")
     category = Category.query.filter_by(category_name=category_name).first()
     
@@ -289,29 +288,13 @@ def copy_items_to_list():
     """save copied item(s) to list"""
 
     user_id = session['current_user']
-
-    existing_list_name = request.form.get("existing_list_name")
-    print existing_list_name
     
+    existing_list_name = request.form.get("existing_list_name")
     existing_list = List.query.filter_by(list_name=existing_list_name).first()
-    print existing_list
 
     list_id = existing_list.list_id
-    print list_id
 
-    category_name = request.form.getlist("category_name")  
-    
-    categories = []
-
-    for i in category_name:
-        category = Category.query.filter_by(category_name=i).one()
-        category_id = category.category_id   
-        categories.append(category_id)
-        print categories
-    
-    item_name = request.form.getlist("item_name")
-    item_address = request.form.getlist("item_address")
-    item_comments = request.form.getlist("item_comments")
+    categories, item_name, item_address, item_comments = get_item_choices(request)
 
     for num in range(len(categories)):
 
@@ -353,7 +336,6 @@ def start_new_list():
     list_name = request.form.get("list_name") 
 
     location_name = request.form.get("location_name")
-
     location = Location.query.filter_by(location_name=location_name).first()
 
     if location == None:
@@ -394,52 +376,35 @@ def start_new_list():
     db.session.add(new_item)
     db.session.commit()
 
-    return render_template("new_item.html",
-                            list_id=list_id,
-                            location_id=location_id)
-
-
-@app.route('/new_item', methods=["POST"])
-def new_item():
-    """Form to ask user if they want to add another item"""
-    
-    user_id = session['current_user']
-    list_id = session['current_list']
-
-    YN = request.form.get("YN")
-
-    if YN == "yes":
-         return render_template("add_new_items.html", 
-                                list_id=list_id)
-
     return render_template("list_detail.html", 
                             lists=List.query.filter_by(list_id=list_id).one(), 
                             items=Item.query.filter_by(list_id=list_id).all())
 
 
+@app.route('/add_item_to_existing_list')
+def add_item_to_existing_list():
+    """Sends user to add another item page"""
+
+    user_id = session['current_user']
+    list_id = session['current_list']
+
+    #list query need to be here or things get save to last list viewed
+    lists = List.query.filter_by(user_id=user_id).all()
+
+    return render_template("add_new_items.html",
+                                list_id=list_id)
+
+
 @app.route('/add_another_item', methods=["POST"])
 def add_another_item():
-    """add item to list"""
+    """add item(s) to a list"""
 
     # TODO: fix DOM so that we can get rid of workaround for empty submission
 
     user_id = session['current_user']
     list_id = session['current_list']
 
-    category_names = request.form.getlist("category_name")  
-    
-    categories = []
-
-    for category_name in category_names:
-        if category_name:
-            category = Category.query.filter_by(category_name=category_name).one()
-            category_id = category.category_id   
-            categories.append(category_id)
-            print categories
-    
-    item_name = request.form.getlist("item_name")
-    item_address = request.form.getlist("item_address")
-    item_comments = request.form.getlist("item_comments")
+    categories, item_name, item_address, item_comments = get_item_choices(request)
 
     for num in range(len(categories)):
         final_item = Item(list_id=list_id,
@@ -453,22 +418,9 @@ def add_another_item():
 
     flash ("Your item has been added")
 
-    return render_template("new_item.html",
-                            list_id=list_id)
-
-
-@app.route('/add_item_to_existing_list')
-def add_item_to_existing_list():
-    """Add item to existing list"""
-
-    user_id = session['current_user']
-    list_id = session['current_list']
-
-    #list query need to be here or things get save to last list viewed
-    lists = List.query.filter_by(user_id=user_id).all()
-
-    return render_template("add_new_items.html",
-                                list_id=list_id)
+    return render_template("list_detail.html", 
+                            lists=List.query.filter_by(list_id=list_id).one(), 
+                            items=Item.query.filter_by(list_id=list_id).all())
 
 
 
