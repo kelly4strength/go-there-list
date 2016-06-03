@@ -26,8 +26,7 @@ $(document).ready(function() {
         })
         .on("click", ".removeButton", function(e) {
             if (field > 1){
-                $(this).parents(".form-group").remove();  
-                // Use the .parents() method to traverse up through the ancestors of the DOM tree
+                $(this).parents(".form-group").remove();  // Use the .parents() method to traverse up through the ancestors of the DOM tree
                 field--;
             }
         });

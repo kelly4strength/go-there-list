@@ -320,7 +320,6 @@ def copy_items_to_list():
                     item_name=item_name[num],
                     item_address=item_address[num],
                     item_comments=item_comments[num])
-        #print final_item
 
         db.session.add(final_item)
         db.session.commit()
@@ -422,23 +421,35 @@ def new_item():
 def add_another_item():
     """add item to list"""
 
+    # TODO: fix DOM so that we can get rid of workaround for empty submission
+
     user_id = session['current_user']
     list_id = session['current_list']
 
-    item_name, item_address, item_comments = get_item_choices(request)
+    category_names = request.form.getlist("category_name")  
+    
+    categories = []
 
-    category_name = request.form.get("category_name")
-    category = Category.query.filter_by(category_name=category_name).first()
-    category_id = session['current_category'] = category.category_id
+    for category_name in category_names:
+        if category_name:
+            category = Category.query.filter_by(category_name=category_name).one()
+            category_id = category.category_id   
+            categories.append(category_id)
+            print categories
+    
+    item_name = request.form.getlist("item_name")
+    item_address = request.form.getlist("item_address")
+    item_comments = request.form.getlist("item_comments")
 
-    new_item = Item(list_id=list_id,
-                    category_id=category_id,
-                    item_name=item_name,
-                    item_address=item_address,
-                    item_comments=item_comments)
+    for num in range(len(categories)):
+        final_item = Item(list_id=list_id,
+                category_id=categories[num],
+                item_name=item_name[num],
+                item_address=item_address[num],
+                item_comments=item_comments[num])
 
-    db.session.add(new_item)
-    db.session.commit()
+        db.session.add(final_item)
+        db.session.commit()
 
     flash ("Your item has been added")
 
@@ -453,6 +464,7 @@ def add_item_to_existing_list():
     user_id = session['current_user']
     list_id = session['current_list']
 
+    #list query need to be here or things get save to last list viewed
     lists = List.query.filter_by(user_id=user_id).all()
 
     return render_template("add_new_items.html",
