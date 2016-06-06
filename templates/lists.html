@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<title>Lists Directory</title>
+<div class="col-xs-offset-2">
+<h2>Lists</h2>
+<h3>Click on a goList</h3>
+  <div>
+    <ul>
+      {% for list in lists %}
+        <li>
+          <a href="/lists/{{ list.list_id }}">
+            {{ list.list_name }}
+          </a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
+
+<!-- will want these organized by location id (cities) at some point -->
