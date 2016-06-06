@@ -3,20 +3,18 @@
 {% block content %}
 
 <title>List Detail Page</title>
-
-<h2>List Info</h2>
-    <div>
-        <!-- hides this link if the list_id doesn't belong to user_id in session -->
+<div class="list-details col-xs-offset-2">
+<!-- <h3>List Info</h3> -->
+    <div>       
+                <h2> {{ lists.list_name }} </h2>
+                <h3>{{ lists.location.location_name }} </h3>
+                <!-- hides this link if the list_id doesn't belong to user_id in session -->
         {% if session.get('current_user') == lists.user_id %}
         <button><a href="/add_item_to_existing_list" class="button" 
             id="add_item_button">Add an item</a></button>
         {% endif %}
-            <br>
-                <br>
-                List Name: {{ lists.list_name }}
-                <br>
-                Location: {{ lists.location.location_name }}
-                <br>
+        <br>
+        <br>
                     <ul>
                         {% for item in items %}
                             <form action="/copy_items" method="POST">
@@ -36,6 +34,6 @@
                             </form> 
                     </ul>
     </div>
-
+</div>
 {% endblock %}
 

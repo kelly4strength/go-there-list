@@ -19,12 +19,12 @@
     <style type="text/css">
 
 
-           body {
-           background: #333 url("/static/polarbear.jpg");
+/*           body {
+           background: #333 url("/static/twinpeaks.jpg");
            background-size: cover;
            text-align: left;
            }
-
+*/
             div {
             font-family: Futura;
             color: #09B2A9;
@@ -53,11 +53,13 @@
 
 <body>
 
-          <div>
+          <div class="col-xs-offset-1">
             {% for message in get_flashed_messages()  %}
                 {{ message }}
             {% endfor %}
           </div>
+
+
             {% block content %} 
 
 <!-- <div class="site-wrapper" id='loginStuff'>

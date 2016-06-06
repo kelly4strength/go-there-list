@@ -3,7 +3,7 @@
 {% block content %}
 
 <title>User Detail Page</title>
-
+<div class="list-details col-xs-offset-2">
 <h2>User Info</h2>
     <div>
     {{ user.user_name }}'s Lists
@@ -19,4 +19,6 @@
             {% endfor %}
         </ul> 
     </div>
+</div>
+
 {% endblock %}

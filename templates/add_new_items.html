@@ -11,7 +11,7 @@
 <form action="/add_another_item" method="POST" id="itemForm" class="form-horizontal">
 	
 	<div class="form-group">
-		<div class="col-xs-6 col-xs-offset-1">
+		<div class="col-xs-6 col-xs-offset-2">
 			Choose a category for your item:
 			<!-- add a check here that this is added before submit or get error -->
 			<select name="category_name">Categories
@@ -36,13 +36,15 @@
 				<textarea name="item_comments" class="form-control" id="CommentsTextArea" rows="3"placeholder="Item Comments"></textarea>
 			</fieldset>
 		<div class="col-xs-6 col-xs-offset-1 row-xs-offset-1">
-	</div>
+	
 
 	<div class = "col-xs-1 col-xs-offset-1">
         <button type="button" class="btn btn-default addButton">
             <span class="glyphicon glyphicon-plus"></span>
         </button>
     </div>
+
+</div>
 
 	<div class="form-group" id="itemTemplate" hidden>
 		<div class="col-xs-6 col-xs-offset-1">
@@ -70,17 +72,17 @@
 					<textarea name="item_comments" class="form-control" rows="3"placeholder="Item Comments"></textarea>
 				</fieldset>
 		</div>
-				 	<div class = "col-xs-1 col-xs-offset-6">
+				 <!-- 	<div class = "col-xs-1 col-xs-offset-6">
                 <button type="button" class="btn btn-default removeButton">
                     <span class="glyphicon glyphicon-minus"></span>
                 </button>
-            </div>
+            </div> -->
 	</div>
 
      
     <div class = "col-xs-1 col-xs-offset-6">   
 	<input type="submit" class="btn btn-primary">
-	  </div>
+	 </div>
 
 </form>
 

@@ -9,7 +9,6 @@ $(document).ready(function() {
     // this funtion in calling the entire form class
     $("#itemForm")
         .on("submit", function(e){ 
-            // .trim method trims out whitespace before and after string
             if ($(".form-control").val()) === "") {
                 alert("Please fill out the entire form.");
                 e.preventDefault();
@@ -24,12 +23,13 @@ $(document).ready(function() {
                 field++;
             }
         })
-        .on("click", ".removeButton", function(e) {
-            if (field > 1){
-                $(this).parents(".form-group").remove();  // Use the .parents() method to traverse up through the ancestors of the DOM tree
-                field--;
-            }
-        });
+//         .on("click", ".removeButton", function(e) {
+//             if (field > 1){
+//                 $(this).parents(".form-group").remove();  
+// // Use the .parents() method to traverse up through the ancestors of the DOM tree
+//                 field--;
+//             }
+//         });
         
 });
 

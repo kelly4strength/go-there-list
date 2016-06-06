@@ -7,8 +7,8 @@ def sample_data():
 	"""create sample data"""
 
 	# In case this is run more than once, dump existing data
-	db.drop_all()
-	db.create_all()
+	# db.drop_all()
+	# db.create_all()
 
 	# Add sample Uers
 	user1 = User(user_name='Kelly', password='1234', email='kelly4strength@gmail.com')
@@ -86,6 +86,6 @@ def sample_data():
 connect_to_db(app)
 print "Connected to DB."
 
-sample_data()
+# sample_data()
 
-print "Sample Data created"
+# print "Sample Data created"

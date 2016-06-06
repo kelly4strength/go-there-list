@@ -2,6 +2,10 @@
 
 from flask_sqlalchemy import SQLAlchemy
 
+# from werkzeug.security import generate_password_hash, \
+#      check_password_hash
+
+
 # This is the connection to the PostgreSQL database through
 # the Flask-SQLAlchemy helper library. On this, we can find the `session`
 # object, where we do most of our interactions (like committing, etc.)
@@ -20,6 +24,7 @@ class User(db.Model):
     user_name = db.Column(db.String(64), nullable=True)
     email = db.Column(db.String(80), nullable=True)
     password = db.Column(db.String(64), nullable=True)
+    # password = db.Column(db.BigInteger, nullable=True)
 
     def __repr__(self):
         """Provide helpful representation when printed."""

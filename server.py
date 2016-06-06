@@ -61,7 +61,9 @@ def user_add():
 
     email = request.form.get("email")
     password = request.form.get("password")
+    # password = hash(password)
     user_name = request.form.get("user_name")
+    # print password
 
     if User.query.filter_by(email=email).first() == None:
         new_user = User(email=email,
@@ -73,6 +75,7 @@ def user_add():
         flash("Hi %s, You are now registered! Please log in." % user_name)
 
         return render_template("homepage.html")
+
    
 @app.route('/user_validation', methods=["POST"])
 def user_validation():
@@ -131,6 +134,7 @@ def list_details(list_id):
 @app.route('/my_lists')
 def my_lists():
     """Show all lists created by current user""" 
+    #add clause that if a user has no lists they see a flash message with you don't have any lists
 
     if session.get('current_user') == None:
         flash ("please login first")
@@ -147,26 +151,14 @@ def my_lists():
 def item_details(item_id):
     """Take user to a page that displays item in a list"""
     
-    # if session.get('current_user') == None:
-    #     flash ("please login first")
-    #     return render_template("login.html") 
+    if session.get('current_user') == None:
+        flash ("please login first")
+        return render_template("login.html") 
 
-    # user_id = session['current_user']
-    # list_id = session['current_list']
+    user_id = session['current_user']
+    list_id = session['current_list']
 
-    # session['current_item'] = item_id
-
-    # Which is better? 
-    try:
-        user_id = session['current_user']
-        list_id = session['current_list']
-
-        session['current_item'] = item_id
-    
-    except:
-        session['current_user'] = None
-        flash('Please log in to see item details. Thanks :)')
-        return render_template("login.html")
+    session['current_item'] = item_id
  
     return render_template("item_detail.html", 
                         lists=List.query.filter_by(list_id=list_id).first(), 
@@ -345,9 +337,7 @@ def start_new_list():
 
         location = Location.query.filter_by(location_name=location_name).one()
 
-        session['current_location'] = location.location_id
-
-    location_id = session['current_location']
+    location_id = session['current_location'] = location.location_id
 
     new_list = List(user_id=user_id,
                     location_id=location_id,
