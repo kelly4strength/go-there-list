@@ -135,22 +135,21 @@ class FlaskTestsDatabase(TestCase):
         result = self.client.get("/my_lists")
         self.assertIn("My New York", result.data)
         print "completed my_lists page test"
-# ProgrammingError: (psycopg2.ProgrammingError) operator does not exist: 
-# integer = integer[]
-# LINE 3: WHERE users.user_id = ARRAY[1]
-#                             ^
-# HINT:  No operator matches the given name and argument type(s). 
-# You might need to add explicit type casts.
-# [SQL: 'SELECT users.user_id AS users_user_id, users.user_name AS users_user_name, 
-# users.email AS users_email, users.password AS users_password \nFROM users \nWHERE 
-# users.user_id = %(user_id_1)s'] [parameters: {'user_id_1': [1]}]
 
-    def test_login(self):
-        """Test login page."""
+    def test_user_validation(self):
+        """Test user validation route."""
 
         result = self.client.post('/user_validation', 
                                   data={"email": "kelly4strength@gmail.com", "password": "1234"})
         self.assertIn("you are now logged in!", result.data)
+        print "completed user validation page test"
+
+    def test_item_detail(self):
+        """Test item detail page."""
+
+        result = self.client.get("/item_detail/1")
+        self.assertIn("My New York", result.data)
+        print "completed my_lists page test"
 
 
 
@@ -166,7 +165,7 @@ class FlaskTestsDatabase(TestCase):
 
     # def test_user_add(self):
 
-    # def test_item_detail(self):
+    
 
     # def test_edit_item_detail(self):
 

@@ -7,7 +7,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 
 from model import connect_to_db, db, User, List, Location, Category, Item, copy_items_to_db
 
-from helper import flash_copied_item_names, get_item_choices
+from helper import flash_copied_item_names, get_item_choices, flash_added_item_names
 
 app = Flask(__name__)
 
@@ -295,20 +295,10 @@ def copy_items_to_list():
     item_comments = request.form.getlist("item_comments")
 
     copy_items_to_db(categories, list_id, item_name, item_address, item_comments)
-    # for num in range(len(categories)):
-
-    #     final_item = Item(list_id=list_id,
-    #                 category_id=categories[num],
-    #                 item_name=item_name[num],
-    #                 item_address=item_address[num],
-    #                 item_comments=item_comments[num])
-
-    #     db.session.add(final_item)
-    #     db.session.commit()
 
     name = flash_copied_item_names(item_name)
 
-    flash ("%s has been copied to your list" % name )
+    flash ("%s copied to your list" % name )
 
     return render_template("list_detail.html", 
                             lists=List.query.filter_by(list_id=list_id).first(), 
@@ -355,6 +345,7 @@ def start_new_list():
     db.session.add(new_list)
     db.session.commit()
     
+    #this means you can't have more than one list with the same name :/
     lists = List.query.filter_by(list_name=list_name).one()
     
     user_id = session['current_user']
@@ -403,7 +394,15 @@ def add_another_item():
     user_id = session['current_user']
     list_id = session['current_list']
 
-    categories, item_name, item_address, item_comments = get_item_choices(request)
+    # categories, item_name, item_address, item_comments = get_item_choices(request)
+    category_names = request.form.getlist("category_name")  
+
+    categories = get_item_choices(category_names)
+    
+    item_name = request.form.getlist("item_name")
+    item_address = request.form.getlist("item_address")
+    item_comments = request.form.getlist("item_comments")
+
 
     for num in range(len(categories)):
         final_item = Item(list_id=list_id,
@@ -415,7 +414,10 @@ def add_another_item():
         db.session.add(final_item)
         db.session.commit()
 
-    flash ("Your item has been added")
+    name = flash_added_item_names(item_name)
+
+    #fix flash in the helper.py to add commas
+    flash ("%s added to your list" % name )
 
     return render_template("list_detail.html", 
                             lists=List.query.filter_by(list_id=list_id).one(), 

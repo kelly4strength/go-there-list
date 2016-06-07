@@ -24,6 +24,14 @@ def flash_copied_item_names(item_name):
     return str(name[5:])
 
 
+def flash_added_item_names(item_name):
+    """add 'and' between copied item names in flash"""
+    
+    name =""
+    for num in range(len(item_name)):
+        name += ' ' + item_name[num]
+    return str(name[1:])
+
 #from the copy_items route....
 # def get_item_choices(item_ids):
 

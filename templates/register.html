@@ -5,16 +5,29 @@
 <title>Registration Page</title>
 
 <div class="list-details col-xs-offset-2">
-	<h2>Register for Go Lists</h2>
-		<form action="/user_add" method="POST">
-		    User Name <input type="text" required name="user_name" maxlength="50">
-		        <br>
-		    Email <input type="text" required name="email"> 
-		        <br>
-		    Password <input type="text" required name="password">
-		        <br>
-		    <input type="submit">    
-		        <br>
-		</form>
+  <div class="well">
+		<h2>Register</h2>
+			<br>
+				<form action="/user_add" method="POST">
+					<div class="form-group">
+					    <label for="InputUserName">User Name</label>
+					    <input type="user_name" class="form-control" id="InputUserName" placeholder="User Name">
+					 </div>	 
+					 <div class="form-group">
+					    <label for="InputEmail">Email address</label>
+					    <input type="email" class="form-control" id="InputEmail" placeholder="Email">
+					</div>
+					<div class="form-group">
+					    <label for="InputPassword">Password</label>
+					    <input type="password" class="form-control" id="InputPassword" placeholder="Password">
+					</div>
+
+					<div class="form-group row">
+					    <div class="col-sm-offset-2 col-sm-10">
+					      <button type="submit" class="btn btn-secondary">Submit</button>
+					    </div>
+					</div>
+				</form>
+	</div>
 </div>
 {% endblock %}
