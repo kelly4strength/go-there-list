@@ -5,9 +5,9 @@ from jinja2 import StrictUndefined
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import connect_to_db, db, User, List, Location, Category, Item
+from model import connect_to_db, db, User, List, Location, Category, Item, copy_items_to_db
 
-from helper import *
+from helper import flash_copied_item_names, get_item_choices
 
 app = Flask(__name__)
 
@@ -286,20 +286,29 @@ def copy_items_to_list():
 
     list_id = existing_list.list_id
 
-    categories, item_name, item_address, item_comments = get_item_choices(request)
+    category_names = request.form.getlist("category_name")  
 
-    for num in range(len(categories)):
+    categories = get_item_choices(category_names)
+    
+    item_name = request.form.getlist("item_name")
+    item_address = request.form.getlist("item_address")
+    item_comments = request.form.getlist("item_comments")
 
-        final_item = Item(list_id=list_id,
-                    category_id=categories[num],
-                    item_name=item_name[num],
-                    item_address=item_address[num],
-                    item_comments=item_comments[num])
+    copy_items_to_db(categories, list_id, item_name, item_address, item_comments)
+    # for num in range(len(categories)):
 
-        db.session.add(final_item)
-        db.session.commit()
+    #     final_item = Item(list_id=list_id,
+    #                 category_id=categories[num],
+    #                 item_name=item_name[num],
+    #                 item_address=item_address[num],
+    #                 item_comments=item_comments[num])
 
-    flash ("%s has been copied to your list" % item_name )
+    #     db.session.add(final_item)
+    #     db.session.commit()
+
+    name = flash_copied_item_names(item_name)
+
+    flash ("%s has been copied to your list" % name )
 
     return render_template("list_detail.html", 
                             lists=List.query.filter_by(list_id=list_id).first(), 

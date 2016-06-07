@@ -145,13 +145,12 @@ class FlaskTestsDatabase(TestCase):
 # users.email AS users_email, users.password AS users_password \nFROM users \nWHERE 
 # users.user_id = %(user_id_1)s'] [parameters: {'user_id_1': [1]}]
 
-    # def test_login(self):
-    #     """Test login page."""
+    def test_login(self):
+        """Test login page."""
 
-    #     result = self.client.post("/login", 
-    #                               data={"user_id": "rachel", "password": "123"},
-    #                               follow_redirects=True)
-    #     self.assertIn("You are a valued user", result.data)
+        result = self.client.post('/user_validation', 
+                                  data={"email": "kelly4strength@gmail.com", "password": "1234"})
+        self.assertIn("you are now logged in!", result.data)
 
 
 

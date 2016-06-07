@@ -94,6 +94,7 @@ class Item(db.Model):
     item_name = db.Column(db.String(100))
     item_comments = db.Column(db.String(1000))
     item_address = db.Column(db.String(1000))
+    
     list_id = db.Column(db.Integer, db.ForeignKey('lists.list_id'))
     category_id = db.Column(db.Integer, db.ForeignKey('categories.category_id'))
     
@@ -106,6 +107,25 @@ class Item(db.Model):
 
         return "<Item item_id=%s item_name=%s item address_id=%s item_comments=%s list_id=%s, category_id=%s>" % (
             self.item_id, self.item_name, self.item_address, self.item_comments, self.list_id, self.category_id)
+
+
+def copy_items_to_db(categories, list_id, item_name, item_address, item_comments):
+
+    for num in range(len(categories)):
+
+        final_item = Item(list_id=list_id,
+                    category_id=categories[num],
+                    item_name=item_name[num],
+                    item_address=item_address[num],
+                    item_comments=item_comments[num])
+
+        db.session.add(final_item)
+        db.session.commit()
+
+
+
+
+
 
 
 ##############################################################################
