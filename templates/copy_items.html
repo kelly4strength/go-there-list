@@ -5,35 +5,56 @@
 
 <title>Copy Item(s) Form</title>
 
-<h2>Copy Item</h2>
-    <div>        
-        <form action="/copy_items_to_list" method="POST">
+<div class="list-details col-xs-offset-2">
+    <div class="well">
+
+        <div class="col-xs-offset-1">
+            <h2>Copy Items</h2>
+        </div>
+        
+    <form action="/copy_items_to_list" method="POST">
         Choose a list:
-            <select name="existing_list_name">
-                {% for l in list_names %}
-                    <option value="{{ l }}">{{ l }}</option> 
-                        {% endfor %}    
-                            </select> </li>
-                            <h3>Add item to your List</h3> 
-                                {% for item in new_items %}
-                                    <ul>     
-                                        <li>Item Name: <input type="text" name="item_name" 
-                                            value="{{ item.item_name }}" required><br></li>
-                                        <li>Current Category: {{ category.category_name }} 
-                                            <select name="category_name">
-                                                <option value="restaurant">Restaurant</option>
-                                                <option value="bar">Bar</option>
-                                                <option value="museum">Museum</option>
-                                            </select>  </li>
-                                        <li>Address: <input type="text" name="item_address" 
-                                            value="{{ item.item_address }}" required><br></li> 
-                                        <li>Comments:<input type="text" name="item_comments" 
-                                                value="{{ item.item_comments }}" required><br></li> 
-                                    </ul>
-                                {% endfor %}
-                            <br>
-                    Save Item <input type="submit">    
-            <br>
-        </form>
-    </div>
+        <select name="existing_list_name">
+            {% for l in list_names %}
+                <option value="{{ l }}">{{ l }}</option> 
+            {% endfor %}    
+        </select> </li>
+
+                        <!-- <h3>Add item to your List</h3>  -->
+            {% for item in new_items %}
+                <!-- <div class="form-group"> -->
+                <div class="list-details">
+                    <div class="form-group">
+                        Current Category: {{ category.category_name }} 
+                            <select name="category_name">
+                                <option value="restaurant">Restaurant</option>
+                                <option value="bar">Bar</option>
+                                <option value="museum">Museum</option>
+                            </select>  
+                    </div>
+
+                    <div class="form-group">
+                        Name: <input type="text" name="item_name" 
+                            value="{{ item.item_name }}" class="form-control" id="itemName" placeholder="Name" required>
+                    </div>
+                
+                    <div class="form-group">
+                        Address: <input type="text" name="item_address" 
+                            value="{{ item.item_address }}" required class="form-control" id="itemAddress" placeholder="Address">
+                    </div>
+                    
+                    <div class="form-group">
+                        Comments:
+                        <textarea name="item_comments" class="form-control" id="CommentsTextArea" rows="3">{{ item.item_comments }}</textarea>
+                    </div>
+
+                {% endfor %}
+                <br>
+        <input type="submit" name="copy_save_button" value="Save">   
+        <br>
+    </form>
+</div>
 {% endblock %}
+
+
+

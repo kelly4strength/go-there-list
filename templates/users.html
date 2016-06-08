@@ -3,17 +3,17 @@
 {% block content %}
 
 <title>User Directory</title>
-<div class="col-xs-offset-2">
-<h2>Users</h2>
-  <div>
-    Click on a User to see their lists
-    <ul>
-      {% for user in users %}
-        <li>
-          <a href="/users/{{ user.user_id }}">{{ user.user_name }}</a>
-        </li>
-      {% endfor %}
-    </ul>
-  </div>
- </div>
+<div class="list-details col-xs-offset-2">
+    <div class="well">
+      <h2>Users</h2>
+        <div>
+          Click on a User to see their lists
+            <div>
+              {% for user in users %}
+                <p><a href="/users/{{ user.user_id }}">{{ user.user_name }}</a></p>
+              {% endfor %}
+            </div>
+        </div>
+    </div>
+   </div>
 {% endblock %}

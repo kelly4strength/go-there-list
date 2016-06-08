@@ -3,20 +3,19 @@
 {% block content %}
 
 <title>My Lists Page</title>
-<div class="list-details col-xs-offset-2">
-<h2>{{ user.user_name }}'s Lists</h2>
-    <div>
-    	<h3><p><a href="/create_list">Create a new list</a></p><h3>
-<!-- show "you have no lists if the user doesn't have a list" -->
-        <ul> 
-        {% for list in lists %}
 
-            <li>City: {{list.location.location_name}}
-                <ul>
-                	<li>List Name: <a href="/lists/{{ list.list_id }}">{{ list.list_name}}</a>
-            	</li>
-            </ul>
-        {% endfor %}
+<div class="list-details col-xs-offset-2">
+    <div class="well">
+        <h2>{{ user.user_name }}'s Lists</h2>
+            
+            	<h3><p><a href="/create_list">Create a new list</a></p><h3>
+        <!-- show "you have no lists if the user doesn't have a list" -->
+                {% for list in lists %}
+                <div>
+                    <p>List Name: <a href="/lists/{{ list.list_id }}">{{ list.list_name}}</a></p>
+                    <p>{{list.location.location_name}}</p>    	
+                </div>
+                {% endfor %}
     </div>
 </div>
 {% endblock %}

@@ -3,46 +3,39 @@
 {% block content %}
 
 <title>List Detail Page</title>
-<div class="list-details col-xs-offset-2">
-<!-- <h3>List Info</h3> -->
-    <div>       
-                <h2> {{ lists.list_name }} </h2>
-                <h3>{{ lists.location.location_name }} </h3>
-                <!-- hides this link if the list_id doesn't belong to user_id in session -->
-        {% if session.get('current_user') == lists.user_id %}
-        <button><a href="/add_item_to_existing_list" class="button" 
-            id="add_item_button">Add an item</a></button>
-        {% endif %}
-        <br>
-        <br>
-                    <ul>
-                        {% for item in items %}
-                            <form action="/copy_items" method="POST">
-                            <dl>
-                            <dt>Item Name:<a href="/item_detail/{{ item.item_id }}">
-                                                                {{ item.item_name }}</a></dt>
-                            <dd>Category: {{ item.category.category_name }}</dd>
-                            <dd>Address: {{ item.item_address }}</dd>
-                            <dd>Comments: {{ item.item_comments }}</dd>
 
-                            
-                                    Copy item: <input type="checkbox" 
-                                    name="copy_item_ids" multiple id="check{{ item.item_id }}" 
-                                    value="{{ item.item_id }}">  <p hidden {{ item.item_id }}></p>
-                                </dl>
-                            <br>                
-                        {% endfor %}
-                                <input type="submit" name="copy_submit_button" value="COPY ALL">
-                            </form> 
-                    </ul>
+<div class="list-details col-xs-offset-2">
+    <div class="well">
+        <h3>List Details</h3>
+        <h2> {{ lists.list_name }} </h2>
+        <h3>City: {{ lists.location.location_name }} </h3>
+        <!-- hides this link if the list_id doesn't belong to user_id in session -->
+            {% if session.get('current_user') == lists.user_id %}
+            <button><a href="/add_item_to_existing_list" type="submit" class="btn btn-secondary">
+                add an item</a></button>
+            {% endif %}
+            
+               <br><br><br>        
+            
+            {% for item in items %}
+                
+                <form action="/copy_items" method="POST">
+                    <dl>
+                        <dd>Name:<a href="/item_detail/{{ item.item_id }}">
+                            {{ item.item_name }}</a></dd>
+                        <dd>Category: {{ item.category.category_name }}</dd>
+                        <dd>Address: {{ item.item_address }}</dd>
+                        <dd>Comments: {{ item.item_comments }}</dd>
+
+                        Copy item: <input type="checkbox" name="copy_item_ids" multiple id="check{{ item.item_id }}" value="{{ item.item_id }}">  <p hidden {{ item.item_id }}></p>
+                    </dl>
+
+            {% endfor %}
+                        <br> 
+                    <input type="submit" name="copy_submit_button" value="COPY ALL">
+                </form> 
     </div>
 </div>
+
 {% endblock %}
 
-
-
-                               <!--  <li>Item Name: <a href="/item_detail/{{ item.item_id }}">
-                                    {{ item.item_name }}</a></li>
-                                <li>Category: {{ item.category.category_name }}</li> 
-                                <li>Address: {{ item.item_address }}</li> 
-                                <li>Comments: {{ item.item_comments }}</li>-->
